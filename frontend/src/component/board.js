@@ -1,119 +1,109 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import "../styles/board.css";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
+class Board extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            history: [],
+            game: new Chess(),
+        };
+    }
 
-function clearBoard() {
-    // here will be clearBoard function
-}
+    clearBoard = () => {
+        this.setState({
+            history: [],
+            game: new Chess()
+        });
+    }
 
-function SavedGames(prop) {
-    // here will be render board
-}
+    History = (props) => {
+        const { history } = props;
+        let elements = [];
 
-function History (prop){
-    let history = prop.history;
-    let elements = [];
+        let moveCount = 0;
 
-    let moveCount = 0;
+        for (let index = 0; index < history.length; index += 2) {
+            if (index % 2 === 0) {
+                moveCount++;
+            }
 
-    console.log(history)
-
-    for (let index = 0; index <= history.length; index += 2) {
-        if (index % 2 == 0) {
-            moveCount++;
-        }
-
-        elements.push(
-            (
-                <tr>
+            elements.push(
+                <tr key={index}>
                     <td>{moveCount}</td>
                     <td>{history[index]}</td>
                     <td>{history[index + 1]}</td>
                 </tr>
-            )
-        )
+            );
+        }
+
+        return (
+            <tbody>
+                {elements}
+            </tbody>
+        );
     }
 
-
-
-    let dom = (
-        <tbody>
-            {elements}
-        </tbody>
-    )
-
-    return dom
-}
-
-// draw board
-function Board() {
-    const [game, setGame] = useState(new Chess());
-    const [history, setGameHistory] = useState(game.history());
-
-    function makeAMove(move) {
-        const gameCopy = new Chess(game.fen());
+    makeAMove = (move) => {
+        const gameCopy = new Chess(this.state.game.fen());
         gameCopy.move(move);
-        setGame(gameCopy);
-
-        let updatedHistory = history
-        updatedHistory.push(gameCopy.history()[0])
-
-        setGameHistory(updatedHistory);
+        this.setState(prevState => ({
+            game: gameCopy,
+            history: [...prevState.history, gameCopy.history()[0]],
+        }));
     }
 
-    function onDrop(sourceSquare, targetSquare) {
+    onDrop = (sourceSquare, targetSquare) => {
         // try - need for legal moves
         try {
-            const move = makeAMove({
+            this.makeAMove({
                 from: sourceSquare,
                 to: targetSquare,
-                promotion: "q", 
+                promotion: "q",
             });
-        }
-        catch {
+        } catch (error) {
+            // Handle any errors here
         }
     }
 
-
-    return (
-        <section className="container">
-            <section className="board-name">
-                <b>
-                    <input placeholder="Название партии" type="text" id="board-name" />
-                </b>
-            </section>
-            <section className="chess-game">
-                <div className="chess-board">
-                    <div className="active-move">
-                        <div id="active-marker" style={{ bottom: 0, transition: "bottom 1s" }}></div>
+    render() {
+        return (
+            <section className="container">
+                <section className="board-name">
+                    <b>
+                        <input placeholder="Название партии" type="text" id="board-name" />
+                    </b>
+                </section>
+                <section className="chess-game">
+                    <div className="chess-board">
+                        <div className="active-move">
+                            <div id="active-marker" style={{ bottom: 0, transition: "bottom 1s" }}></div>
+                        </div>
+                        <Chessboard className="chessboard" style={{ height: "40vh" }} position={this.state.game.fen()} onPieceDrop={this.onDrop} />
                     </div>
-                    <Chessboard className="chesssboard" style={{height: "40vh" }} position={game.fen()} onPieceDrop={onDrop} />
-
-                </div>
-                <div className="history">
-                    <table id="history-table">
-                        <History id="history-table" history={history}/>
-                    </table>
-                </div>
+                    <div className="history">
+                        <table id="history-table">
+                            <this.History history={this.state.history} />
+                        </table>
+                    </div>
+                </section>
+                <section className="options">
+                    <button id="delete-game">Удалить</button>
+                    <button id="save-game">Сохранить</button>
+                    <button id="clear-board" onClick={this.clearBoard}>Очистить доску</button>
+                    <button id="open-close-for-share">Скрыть от всех/Открыть для всех</button>
+                    <button id="share-game">Поделиться</button>
+                </section>
+                <section className="save">
+                    <h1>Сохраненные партии</h1>
+                    <ul className="save-grid">
+                    </ul>
+                </section>
             </section>
-            <section className="options">
-                <button id="delete-game">Удалить</button>
-                <button id="save-game">Сохранить</button>
-                <button id="clear-board">Очистить доску</button>
-                <button id="open-close-for-share">Скрыть от всех/Открыть для всех</button>
-                <button id="share-game">Поделиться</button>
-            </section>
-            <section className="save">
-                <h1>Сохраненные партии</h1>
-                <ul className="save-grid">
-                    
-                </ul>
-            </section>
-        </section>
-    );
+        );
+    }
 }
-
 
 export default Board;
