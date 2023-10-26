@@ -5,10 +5,12 @@ import { createRoot } from 'react-dom'
 import "./styles/main.css";
 
 import Board from "./component/board";
+import DebutBase from "./component/debut-base"
 
 const App = () => (
   <Routes>
-    <Route path="/" element={<Board />} /> {/* Путь должен быть "path" вместо "exact path" */}
+    <Route path="/board" element={<Board />} /> {}
+    <Route path="/debut-base" element={<DebutBase />} /> {}
   </Routes>
 );
 
