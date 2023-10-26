@@ -9,6 +9,10 @@ function deleteGame() {
     //here will be delebe
 }
 
+function openCloseForAll() {
+    // here will be function for share option 
+}
+
 function shareGame() {
     // here will be share
 }
