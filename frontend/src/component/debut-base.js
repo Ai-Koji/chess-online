@@ -5,15 +5,17 @@ import { Chessboard } from "react-chessboard";
 
 class DebutBase extends React.Component {
     // add fetch
-    getSavedGames() {
+    getDebutesList() {
         // here will be fetch, witch will get save from server
+        return []
     }
-    
+
     DebutList() {
         // {url, name, FEN, RGB}
         let games = []
+        games = this.getDebutesList()
 
-        games = this.getSavedGames()
+        console.log(games)
 
         let elements = [];
         for (let index = 0; index < games.length; index++) {
@@ -22,7 +24,7 @@ class DebutBase extends React.Component {
                     <a href={games[index].url}>
                         <h2>{games[index].name}</h2>
                         <div className="debut-board">
-                            <Chessboard position={games[index].FEN}/>
+                            <Chessboard position={games[index].FEN} />
                         </div>
                     </a>
                 </li>
@@ -48,7 +50,7 @@ class DebutBase extends React.Component {
                         </button>
                     </div>
                     <ul id="debut-items" className="debut-grid">
-                        <this.DebutList />
+                        {this.DebutList()}
                     </ul>
                 </section>
             </section>
