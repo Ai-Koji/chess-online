@@ -4,12 +4,16 @@ import { Chessboard } from "react-chessboard";
 
 
 class DebutBase extends React.Component {
-
     // add fetch
+    getSavedGames() {
+        // here will be fetch, witch will get save from server
+    }
+    
     DebutList() {
-
         // {url, name, FEN, RGB}
         let games = []
+
+        games = this.getSavedGames()
 
         let elements = [];
         for (let index = 0; index < games.length; index++) {
