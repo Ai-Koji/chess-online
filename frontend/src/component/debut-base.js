@@ -15,8 +15,6 @@ class DebutBase extends React.Component {
         let games = []
         games = this.getDebutesList()
 
-        console.log(games)
-
         let elements = [];
         for (let index = 0; index < games.length; index++) {
             elements.push(
