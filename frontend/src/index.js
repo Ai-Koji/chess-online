@@ -6,11 +6,13 @@ import "./styles/main.css";
 
 import Board from "./component/board";
 import DebutBase from "./component/debut-base"
+import BeginBase from "./component/begin-base"
 
 const App = () => (
   <Routes>
     <Route path="/board" element={<Board />} /> {}
     <Route path="/debut-base" element={<DebutBase />} /> {}
+    <Route path="/begin-base" element={<BeginBase />} /> {}
   </Routes>
 );
 
