@@ -3,6 +3,48 @@ import "../styles/board.css";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
+class SavedGamesList extends React.Component {
+    // add fetch
+    getSavedGames() {
+        // here will be fetch, witch will get save from server
+        return []
+    }
+
+    GamesList() {
+        // {url, name, FEN, RGB}
+        let savedGames = []
+
+        savedGames = this.getSavedGames()
+
+        let elements = [];
+        for (let index = 0; index < savedGames.length; index++) {
+            elements.push(
+                <li className="save-item">
+                    <a href={savedGames[index].url}>
+                        <h2>{savedGames[index].name}</h2>
+                        <div className="save-board">
+                            <Chessboard position={savedGames[index].FEN} />
+                        </div>
+                    </a>
+                </li>
+            );
+        }
+
+        return (
+            elements
+        )
+    }
+
+    render() {
+        return (
+            <ul className="save-grid">
+                {this.GamesList()}
+            </ul>
+        );
+    }
+}
+
+
 class Board extends Component {
     constructor(props) {
         super(props);
@@ -13,7 +55,7 @@ class Board extends Component {
     }
 
     clearBoard = () => {
-        this.setState({
+        this.setState({ 
             history: [],
             game: new Chess()
         });
@@ -98,8 +140,7 @@ class Board extends Component {
                 </section>
                 <section className="save">
                     <h1>Сохраненные партии</h1>
-                    <ul className="save-grid">
-                    </ul>
+                    <SavedGamesList />
                 </section>
             </section>
         );
