@@ -1,10 +1,4 @@
-publish all changes to github
 
-finish board page:
-    board-save
-    button functional
-    rules:
-        mate
-        check
-
-send question to teacher
+add debut page
+add lesson page
+add forum
