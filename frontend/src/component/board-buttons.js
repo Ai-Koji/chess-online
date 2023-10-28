@@ -1,18 +1,14 @@
 import React from "react";
 import { Chessboard } from "react-chessboard";
 
-function saveGame(gameFEN) {
-    // here will be save
-}
-
 function deleteGame() {
-    //here will be delebe
+    //here will be delete button
 }
 
 function openCloseForAll() {
-    // here will be function for share option 
+    // here will be function for share option  
 }
 
 function shareGame() {
-    // here will be share
+    // here will be share button
 }
