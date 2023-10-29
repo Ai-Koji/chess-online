@@ -74,9 +74,9 @@ class Board extends Component {
 
             elements.push(
                 <tr key={index}>
-                    <td>{moveCount}</td>
-                    <td>{history[index]}</td>
-                    <td>{history[index + 1]}</td>
+                    <index>{moveCount}</index>
+                    <move>{history[index]}</move>
+                    <move>{history[index + 1]}</move>
                 </tr>
             );
         }

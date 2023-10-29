@@ -1,0 +1,140 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto 30%;
+    grid-gap: 50px;
+}
+
+.board {
+    width: 60vh;
+    max-width: 1000px;
+    height: 100%;
+}
+
+.about-game {
+    width: 100%;
+    height: 60vh;
+    max-height: 990px;
+    padding: 3%;
+    font-size: 20px;
+    align-self: stretch;
+}
+
+.about-game p {
+    display: inline-flex;
+}
+
+.game {
+    height: 85%;
+    overflow-y: scroll;
+    flex-grow: 1;
+}
+
+.move-navigation {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.move-navigation button {
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    font-size: 17px;
+}
+
+index {
+    cursor: default;
+}
+
+move {
+    cursor: pointer;
+    transition: background-color 0.25s ease-in-out;
+}
+
+move:hover {
+    background-color: #3692e7;
+}
+
+.main-moves move {
+    width: 39%;
+    padding: 1.5%;
+    padding-left: 3%;
+    height: 100%;
+    display: inline-block;
+}
+
+.main-moves index {
+    width: 8%;
+    height: 100%;
+    padding: 1.5%;
+    border-right: 5px solid #5b5854;
+    display: inline-block;
+}
+
+.other-moves {
+    width: 97%;
+    font-size: 16px;
+    border: #5b5854 solid 2px;
+    background-color: #353535;
+    padding: 2%;
+    padding-left: 0;
+    display: inline-block;
+    border-radius: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.other-moves tr {
+    width: auto;
+}
+
+.other-moves index {
+    color: #949393;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.other-moves move {
+    padding: 4px;
+    border-radius: 2px;
+}
+
+.description {
+    width: 97%;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 10px;
+    font-size: 15px;
+    border: #5b5854 solid 2px;
+    border-radius: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.buttons {
+    height: 5%;
+    margin-top: 25px;
+    display: grid;
+    border-radius: 20px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.buttons button {
+    padding: 0;
+    background-color: white;
+    border: none;
+    transition: background-color 0.25s ease-in-out;
+}
+.buttons button:hover {
+    background-color: #3692e7;
+}
+
+.buttons img {
+    width: 30%;
+    padding-top: 8px;
+    padding-bottom: 5px;
+}

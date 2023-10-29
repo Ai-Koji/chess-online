@@ -93,14 +93,20 @@ main {
     width: 100%;
 }
 
-.history td {
-    width: 40%;
-    padding: 1%;
+.history move {
+    width: 39%;
+    padding: 1.5%;
+    padding-left: 3%;
+    height: 100%;
+    display: inline-block;
 }
 
-.history td:first-child {
-    width: 10%;
+.history index {
+    width: 8%;
+    height: 100%;
+    padding: 1.5%;
     border-right: 5px solid #5b5854;
+    display: inline-block;
 }
 
 .move-history {
