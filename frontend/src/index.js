@@ -1,13 +1,15 @@
 // index.js
-import React from "react";
+import React, {lazy} from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createRoot } from 'react-dom'
 import "./styles/main.css";
 
-import Board from "./component/board";
-import DebutBase from "./component/debut-base"
-import Debut from "./component/debut"
-import BeginBase from "./component/begin-base"
+
+const Board = lazy(() => import("./component/board"));
+const DebutBase = lazy(() => import("./component/debut-base"));
+const Debut = lazy(() => import("./component/debut"));
+const BeginBase = lazy(() => import("./component/begin-base"));
+const Forum = lazy(() => import("./component/forum"));
 
 const App = () => (
   <Routes>
@@ -15,6 +17,7 @@ const App = () => (
     <Route path="/debut-base" element={<DebutBase />} /> {}
     <Route path="/debut-base/debut" element={<Debut />} /> {}
     <Route path="/begin-base" element={<BeginBase />} /> {}
+    <Route path="/forum" element={<Forum />} /> {}
   </Routes>
 );
 
