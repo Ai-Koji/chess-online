@@ -10,6 +10,7 @@ const DebutBase = lazy(() => import("./component/debut-base"));
 const Debut = lazy(() => import("./component/debut"));
 const BeginBase = lazy(() => import("./component/begin-base"));
 const Forum = lazy(() => import("./component/forum"));
+const ForumList = lazy(() => import("./component/forum-list"));
 
 const App = () => (
   <Routes>
@@ -18,6 +19,7 @@ const App = () => (
     <Route path="/debut-base/debut" element={<Debut />} /> {}
     <Route path="/begin-base" element={<BeginBase />} /> {}
     <Route path="/forum" element={<Forum />} /> {}
+    <Route path="/forum/forum-list" element={<ForumList />} /> {}
   </Routes>
 );
 
