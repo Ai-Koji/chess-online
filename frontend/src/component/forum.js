@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import "../styles/forum.css";
-import { Chessboard } from "react-chessboard";
 
 class Forum extends React.Component {
     render() {
