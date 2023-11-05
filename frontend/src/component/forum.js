@@ -4,7 +4,7 @@ import "../styles/forum.css";
 class Forum extends React.Component {
     render() {
         return (
-            <div className="container">
+            <div className="container" style={{display: "block"}}>
                 <div className="header">
                     <h1>cheeeeeess forum</h1>
                     <input placeholder="Поиск" className="search-input" />
