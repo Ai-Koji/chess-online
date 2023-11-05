@@ -38,6 +38,10 @@ thead {
     background-color: #615f5f;
 }
 
+tbody a {
+    color: rgb(42, 128, 194);
+}
+
 .subject {
     width: 40%;
 }

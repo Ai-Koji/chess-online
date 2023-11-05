@@ -23,62 +23,8 @@ class Forum extends React.Component {
                             <td>
                                 <a href="">
                                     <h1>General Chess Discussion</h1>
+                                </a>
                                     <p>The place to discuss general chess topics</p>
-                                </a>
-                            </td>
-                            <td>65 097</td>
-                            <td>582 657</td>
-                            <td>
-                                <a href="">
-                                    5 минут назад
-                                    <div className="author">
-                                        WindyPawns
-                                    </div>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="">
-                                    <h1>General Chess Discussion</h1>
-                                    <p>The place to discuss general chess topics</p>
-                                </a>
-                            </td>
-                            <td>65 097</td>
-                            <td>582 657</td>
-                            <td>
-                                <a href="">
-                                    5 минут назад
-                                    <div className="author">
-                                        WindyPawns
-                                    </div>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="">
-                                    <h1>General Chess Discussion</h1>
-                                    <p>The place to discuss general chess topics</p>
-                                </a>
-                            </td>
-                            <td>65 097</td>
-                            <td>582 657</td>
-                            <td>
-                                <a href="">
-                                    5 минут назад
-                                    <div className="author">
-                                        WindyPawns
-                                    </div>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="">
-                                    <h1>General Chess Discussion</h1>
-                                    <p>The place to discuss general chess topics</p>
-                                </a>
                             </td>
                             <td>65 097</td>
                             <td>582 657</td>
