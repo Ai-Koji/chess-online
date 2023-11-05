@@ -112,7 +112,7 @@ class Board extends Component {
 
     render() {
         return (
-            <section className="container">
+            <section className="container" style={{display: "block"}}>
                 <section className="board-name">
                     <b>
                         <input placeholder="Название партии" type="text" id="board-name" />

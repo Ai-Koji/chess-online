@@ -3,10 +3,6 @@ main {
     overflow: auto;
 }
 
-.container {
-    display: block;
-}
-
 .board-name {
     width: 100%;
     margin: 0 auto;
