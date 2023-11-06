@@ -13,7 +13,7 @@ class Debut extends React.Component {
     }
     render() {
         return (
-            <div className="container">
+            <div className="container" style={{display: "block"}}>
                 <h1>Итальянска партия</h1>
                 <div className="grid-container">
                     <section className="board chessboard">
@@ -56,13 +56,80 @@ class Debut extends React.Component {
                             </table>
                         </div>
                         <div className="buttons">
-                            <button><img src={arrowPrev2}/></button>
-                            <button><img src={arrowPrev}/></button>
-                            <button><img src={arrowNext}/></button>
-                            <button><img src={arrowNext2}/></button>
+                            <button><img src={arrowPrev2} /></button>
+                            <button><img src={arrowPrev} /></button>
+                            <button><img src={arrowNext} /></button>
+                            <button><img src={arrowNext2} /></button>
                         </div>
                     </section>
                 </div>
+                <h1 className="recomendation-header">Рекомендуем</h1>
+                <ul id="debut-items" className="debut-grid">
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                    <li className="debut-item">
+                        <a href="">
+                            <h2>fds</h2>
+                            <div className="debut-board">
+                                <Chessboard/>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </div>
         )
     }
