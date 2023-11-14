@@ -90,6 +90,7 @@ class Board extends Component {
 
     makeAMove = (move) => {
         const gameCopy = new Chess(this.state.game.fen());
+        console.log(this.state.game.fen())
         gameCopy.move(move);
         this.setState(prevState => ({
             game: gameCopy,

@@ -31,14 +31,15 @@ class Debut extends Component {
     constructor(props) {
         super(props);
         this.startIndex = [0];
-        this.endIndex = [3];
+        this.endIndex = [1, 1];
 
         this.fenList = [
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-            "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-            "rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq - 0 2",
-            "rnbqkbnr/pppp2pp/8/4pp2/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 0 3"
-
+            [
+                "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+                "rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq - 0 2",
+                "rnbqkbnr/pppp2pp/8/4pp2/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 0 3"
+            ]
         ]
 
         this.altenativesMoves = []
@@ -47,7 +48,7 @@ class Debut extends Component {
 
         this.state = {
             indexNow: this.endIndex, // массив содержащий индекс фена доски [[index1], [index2], [index3]]
-            fenNow: this.fenList[this.endIndex]
+            fenNow: this.getFen(this.endIndex)
         };
     }
 
@@ -129,19 +130,17 @@ class Debut extends Component {
         }
     }
 
-    load = (index) => { // при клике на кнопку <move>
-        let fen = this.getFen(index)
-        console.log(index)
-        if (fen != "error") {
-            this.setState(prevState => ({
+    load = (index) => {
+        let fen = this.getFen(index);
+        if (fen !== "error") {
+            this.setState({
                 fenNow: fen,
                 indexNow: index
-            }))
+            });
+        } else {
+            console.log("error in load function");
         }
-        else {
-            console.log("error in load function")
-        }
-    }
+    };
 
     onDrop = (sourceSquare, targetSquare) => {
         //если пользователь ходит, мы проверяем на все возможные ходы по списку и делаем сам ход
@@ -158,10 +157,10 @@ class Debut extends Component {
             let element = getF.fen()
             for (let index = 0; index < this.altenativesMoves.length; index++) {
                 if (this.altenativesMoves[index] == element) {
-                    this.setState(prevState => ({
+                    this.setState({
                         fenNow: this.altenativesMoves[index],
                         indexNow: this.altenativesMovesIndex[index]
-                    }))
+                    })
                     break
                 }
 
@@ -169,6 +168,14 @@ class Debut extends Component {
         } catch (error) {
             console.log("error in onDrop funtion")
         }
+    }
+
+    next = () => {
+        console.log(this.state.indexNow)
+
+    }
+
+    prev = () => {
     }
 
     choice = () => {
@@ -236,8 +243,8 @@ class Debut extends Component {
                         {this.choice()}
                         <div className="buttons">
                             <button onClick={() => { this.load([this.startIndex]) }}><img src={arrowPrev2} /></button>
-                            <button onClick={() => { this.prev() }}><img src={arrowPrev} /></button>
-                            <button onClick={() => { this.next() }}><img src={arrowNext} /></button>
+                            <button onClick={this.prev}><img src={arrowPrev} /></button>
+                            <button onClick={this.next}><img src={arrowNext} /></button>
                             <button onClick={() => { this.load([this.endIndex]) }}><img src={arrowNext2} /></button>
                         </div>
                     </section>
