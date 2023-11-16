@@ -31,7 +31,7 @@ class Debut extends Component {
     constructor(props) {
         super(props);
         this.startIndex = [0];
-        this.endIndex = [1, 1];
+        this.endIndex = [1, 0];
 
         this.fenList = [
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
@@ -63,7 +63,7 @@ class Debut extends Component {
                     console.log("error in getFen function")
                     return "error"
                 }
-                elements = elements[i]
+                elements = elements[index[i]]
             }
             return elements
         } catch {
@@ -77,7 +77,7 @@ class Debut extends Component {
         // эта функция получает все ходы из массива
         let alternativesMoves = []
         let elementsFromObject = []
-        let tempIndex = index
+        let tempIndex = [...index]
         for (let i = 0; i < elements.length; i++) {
             if (typeof elements[i] == "object") {
                 tempIndex.push(-1)
@@ -170,12 +170,43 @@ class Debut extends Component {
         }
     }
 
-    next = () => {
-        console.log(this.state.indexNow)
 
+// нужно доработать:
+// случай, если следующий элемент будет обьектом
+// случай, если обьект закончился(prev)
+    next = () => {
+        let nextIndex = [...this.state.indexNow]
+        nextIndex[nextIndex.length - 1] = nextIndex[nextIndex.length - 1] + 1
+        let fen = this.getFen(nextIndex)
+        while (typeof fen == "object" && fen != undefined) {
+            nextIndex[nextIndex.length - 1] = nextIndex[nextIndex.length - 1] + 1
+            fen = this.getFen(nextIndex)
+        }
+        if (fen != undefined) {
+            this.load(nextIndex)
+        }
     }
 
     prev = () => {
+        let prevIndex = [...this.state.indexNow]
+        prevIndex[prevIndex.length - 1] = prevIndex[prevIndex.length - 1] - 1
+        let fen = this.getFen(prevIndex)
+        while (typeof fen == "object" && fen != undefined) {
+            prevIndex[prevIndex.length - 1] = prevIndex[prevIndex.length - 1] - 1
+            fen = this.getFen(prevIndex)
+        }
+        if (fen != undefined) {
+            this.load(prevIndex)
+        } else if (prevIndex[prevIndex.length - 1] < 0 && prevIndex.length > 1){
+            prevIndex = prevIndex.slice(0, prevIndex [prevIndex.length - 1])
+
+            fen = this.getFen(prevIndex)
+            while (typeof fen == "object" && fen != undefined) {
+                prevIndex[prevIndex.length - 1] = prevIndex[prevIndex.length - 1] - 1
+                fen = this.getFen(prevIndex)
+            }
+            this.load(prevIndex)
+        }
     }
 
     choice = () => {
