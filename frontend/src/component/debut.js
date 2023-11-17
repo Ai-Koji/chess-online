@@ -209,14 +209,6 @@ class Debut extends Component {
         }
     }
 
-    choice = () => {
-        return (
-            <div className="choice">
-                <button >e5</button>
-            </div>
-        )
-    }
-
     render() {
         this.getAlternativesMoves()
         return (
@@ -271,7 +263,6 @@ class Debut extends Component {
                                 </tbody>
                             </table>
                         </div>
-                        {this.choice()}
                         <div className="buttons">
                             <button onClick={() => { this.load([this.startIndex]) }}><img src={arrowPrev2} /></button>
                             <button onClick={this.prev}><img src={arrowPrev} /></button>
