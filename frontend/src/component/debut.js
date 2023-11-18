@@ -26,6 +26,9 @@ import arrowNext2 from "../images/skip-next2.svg"
 эти строки содержат fen доски
 */
 
+// to do:
+// добавить 
+
 class Debut extends Component {
     elements = [1, 2, 3, 4]
     constructor(props) {

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import "../styles/forum.css";
 
+// to do:
+// добавить запросы
+
 class Forum extends React.Component {
     render() {
         return (

@@ -2,6 +2,9 @@ import React from 'react';
 import arrowBack from "../images/arrow-back.svg"
 import "../styles/forum-page.css";
 
+// to do:
+// add server request
+// add "add message" page
 
 class ForumPage extends React.Component {
     render () {

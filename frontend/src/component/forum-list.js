@@ -2,6 +2,10 @@ import React from 'react';
 import "../styles/forum-list.css";
 import arrowBack from "../images/arrow-back.svg"
 
+// to do:
+// добавить запросы на сервер
+// добавить "создание сообщения" 
+
 class ForumList extends React.Component {
     render() {
         return (

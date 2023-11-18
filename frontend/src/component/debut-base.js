@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import "../styles/debut-base.css";
 import { Chessboard } from "react-chessboard";
 
+// to do:
+// добавить обработку запросов
 
 class DebutBase extends React.Component {
     // add fetch
