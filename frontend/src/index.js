@@ -12,6 +12,8 @@ const BeginBase = lazy(() => import("./component/begin-base"));
 const Forum = lazy(() => import("./component/forum"));
 const ForumList = lazy(() => import("./component/forum-list"));
 const ForumPage = lazy(() => import("./component/forum-page"));
+const Login = lazy(() => import("./component/login"));
+const Reg = lazy(() => import("./component/reg"));
 
 const App = () => (
   <Routes>
@@ -22,6 +24,8 @@ const App = () => (
     <Route path="/forum" element={<Forum />} /> {}
     <Route path="/forum/forum-list" element={<ForumList />} /> {}
     <Route path="/forum/forum-list/forumpage" element={<ForumPage />} /> {}
+    <Route path="/login" element={<Login />} /> {}
+    <Route path="/registration" element={<Reg />} /> {}
   </Routes>
 );
 
