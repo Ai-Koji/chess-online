@@ -15,7 +15,7 @@ class ForumList extends React.Component {
                         <img src={arrowBack}/>
                     </button>
                     <h1>cheeeeeess forum</h1>
-                    <button className="create">СОЗДАТЬ НОВУЮ ТЕМУ</button>
+                    <a href="/forum-create-topic" className="create">СОЗДАТЬ НОВУЮ ТЕМУ</a>
                 </div>
                 <table className="list">
                     <thead>

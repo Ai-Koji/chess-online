@@ -14,6 +14,7 @@ const ForumList = lazy(() => import("./component/forum-list"));
 const ForumPage = lazy(() => import("./component/forum-page"));
 const Login = lazy(() => import("./component/login"));
 const Reg = lazy(() => import("./component/reg"));
+const CreateTopic = lazy(() => import("./component/forum-create-topic"));
 
 const App = () => (
   <Routes>
@@ -22,8 +23,9 @@ const App = () => (
     <Route path="/debut-base/debut" element={<Debut />} /> {}
     <Route path="/begin-base" element={<BeginBase />} /> {}
     <Route path="/forum" element={<Forum />} /> {}
-    <Route path="/forum/forum-list" element={<ForumList />} /> {}
-    <Route path="/forum/forum-list/forumpage" element={<ForumPage />} /> {}
+    <Route path="/forum-list" element={<ForumList />} /> {}
+    <Route path="/forumpage" element={<ForumPage />} /> {}
+    <Route path="/forum-create-topic" element={<CreateTopic />} /> {}
     <Route path="/login" element={<Login />} /> {}
     <Route path="/registration" element={<Reg />} /> {}
   </Routes>
