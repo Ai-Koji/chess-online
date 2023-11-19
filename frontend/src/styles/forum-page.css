@@ -37,7 +37,7 @@ main .container {
     text-align: left;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid #fff;
 }
 
 .message-header {
@@ -135,7 +135,7 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-    background-color: white;
+    background-color: #fff;
     color: #333;
 }
 

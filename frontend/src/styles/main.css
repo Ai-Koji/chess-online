@@ -77,6 +77,10 @@ nav .right a {
     color: rgb(0, 145, 255);
 }
 
+nav .right a:hover {
+    color: #fff;
+}
+
 @media screen and (max-width: 767px) {
     .container {
         flex-direction: column;
