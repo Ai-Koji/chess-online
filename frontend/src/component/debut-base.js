@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "../styles/debut-base.css";
 import { Chessboard } from "react-chessboard";
 

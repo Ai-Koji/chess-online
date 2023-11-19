@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "../styles/board.css";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
@@ -45,7 +45,7 @@ class SavedGamesList extends React.Component {
 }
 
 
-class Board extends Component {
+class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

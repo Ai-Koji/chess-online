@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "../styles/debut.css";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
@@ -29,7 +29,7 @@ import arrowNext2 from "../images/skip-next2.svg"
 // to do:
 // добавить 
 
-class Debut extends Component {
+class Debut extends React.Component {
     elements = [1, 2, 3, 4]
     constructor(props) {
         super(props);
