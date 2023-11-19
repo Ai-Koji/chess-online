@@ -14,7 +14,7 @@ class Login extends React.Component {
                         <input />
                         <label>Пароль</label>
                         <input />
-                        <input type='submit' placeholder='Войти'/>
+                        <input type='submit' value='Войти'/>
                     </form>
                     <div className="urls">
                         <a href='/registration'>Регистрация</a>

@@ -14,7 +14,7 @@ class Reg extends React.Component {
                         <input />
                         <label>Электронная почта</label>
                         <input />
-                        <input type='submit' placeholder='Войти'/>
+                        <input type='submit' value='Войти'/>
                     </form>
                     <div className="urls">
                         <a href='/login'>Авторизация</a>
