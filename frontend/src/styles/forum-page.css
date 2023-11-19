@@ -138,3 +138,18 @@ input[type="submit"]:hover {
     background-color: white;
     color: #333;
 }
+
+.show-more {
+    margin: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    background-color: rgba(42, 128, 194, 0.6);
+    color: #fff;
+    transition: all 0.5s;
+}
+.show-more:hover {
+    background-color: #fff;
+    color: #333;
+}

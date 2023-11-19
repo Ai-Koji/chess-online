@@ -49,7 +49,7 @@ class ForumPage extends React.Component {
                         </div>
                     </div>
                 </div>
-                <button>Показать еще</button>
+                <button className="show-more">Показать еще</button>
                 <div className="answer-form">
                     <form action="/submit" method="post">
                         <h1>Ответить</h1>
