@@ -17,7 +17,7 @@ class Login extends React.Component {
                         <input type='submit' placeholder='Войти'/>
                     </form>
                     <div className="urls">
-                        <a href=''>Регистрация</a>
+                        <a href='/registration'>Регистрация</a>
                     </div>
                 </div>
             </div>

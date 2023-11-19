@@ -7,7 +7,7 @@ class Reg extends React.Component {
             <div className="container">
                 <div className="form">
                     <form >
-                        <h1>Войти</h1>
+                        <h1>Регистрация</h1>
                         <label>Логин</label>
                         <input />
                         <label>Пароль</label>
@@ -17,7 +17,7 @@ class Reg extends React.Component {
                         <input type='submit' placeholder='Войти'/>
                     </form>
                     <div className="urls">
-                        <a href=''>Авторизация</a>
+                        <a href='/login'>Авторизация</a>
                     </div>
                 </div>
             </div>
