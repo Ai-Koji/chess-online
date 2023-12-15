@@ -6,14 +6,12 @@ class Login extends React.Component {
         return (
             <div className="container">
                 <div className="form">
-                    <form >
+                    <form action="/api/login" method="POST">
                         <h1>Войти</h1>
-                        <label>Имя пользователя</label>
-                        <input />
                         <label>Логин или электронная почта</label>
-                        <input />
+                        <input name="loginOrMail"/>
                         <label>Пароль</label>
-                        <input />
+                        <input name="password"/>
                         <input type='submit' value='Войти'/>
                     </form>
                     <div className="urls">
