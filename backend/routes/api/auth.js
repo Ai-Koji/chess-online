@@ -28,7 +28,7 @@ auth.post('/register', function (req, res, next) {
     res.sendStatus(400);
     return
   } else if (Object.keys(req.cookies).length > 0) {
-    if (!(Object.keys(req.cookies)[0] in Object.keys(cookies))){
+    if (!(Object.keys(req.cookies)[0] in Object.keys(cookies))) {
       let token = req.cookies;
       delete cookies[token];
       res.clearCookie(token);
@@ -41,7 +41,7 @@ auth.post('/register', function (req, res, next) {
   // Checking the login for universality
   const checkLogin = (login) => {
     return new Promise((resolve, reject) => {
-      connection.query("SELECT 1 FROM Users WHERE login = ?", [login], function (err, results, fields) {
+      connection.query("SELECT 1 FROM Users WHERE login = ?", [login], function (err, results) {
         if (err) {
           reject(err);
         }
@@ -52,29 +52,55 @@ auth.post('/register', function (req, res, next) {
       });
     });
   }
+
+  const checkEmail = (email) => {
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT 1 FROM Users WHERE email = ?", [email], function (err, results) {
+        if (err) {
+          reject(err);
+        }
+        if (results.length > 0)
+          resolve(true);
+        else
+          resolve(false);
+      });
+    });
+  }
+
   checkLogin(login)
     .then((isUse) => {
       if (isUse) {
         res.sendStatus(412);
         return;
       }
+      checkEmail(email)
+        .then((isUse) => {
+          if (isUse) {
+            res.sendStatus(412);
+            return;
+          }
 
-      //save info to db
-      sqlCode = 'INSERT INTO Users (login, password, email) VALUES (?, ?, ?)'
-      values = [login, password, email]
-      connection.query(sqlCode, values)
+          //save info to db
+          sqlCode = 'INSERT INTO Users (login, password, email) VALUES (?, ?, ?)'
+          values = [login, password, email]
+          connection.query(sqlCode, values)
 
-      // create and save token
-      let accessToken = jwt.sign({ login: login, email: email }, accessTokenSecret);
-      cookies[accessToken] = {
-        login: login,
-        password: password,
-        email: email
-      };
+          // create and save token
+          let accessToken = jwt.sign({ login: login, email: email }, accessTokenSecret);
+          cookies[accessToken] = {
+            login: login,
+            password: password,
+            email: email
+          };
 
-      res.cookie(accessToken);
-      res.sendStatus(200);
-      return;
+          res.cookie(accessToken);
+          res.sendStatus(200);
+          return;
+        })
+        .catch((error) => {
+          console.error("Ошибка выполнения запроса:", error);
+          res.sendStatus(500);
+        })
     })
     .catch((error) => {
       console.error("Ошибка выполнения запроса:", error);
