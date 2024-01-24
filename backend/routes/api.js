@@ -1,11 +1,9 @@
 var express = require('express');
-var router = express.Router();
+var auth = require('./api/auth')
+var api = express.Router();
 
-/* GET users listing. */
 
-router.post('/registration', function(req, res, next) {
-  console.log(req.body)
-  res.sendStatus(200);
-});
 
-module.exports = router;
+api.use('/auth', auth);
+
+module.exports = api;

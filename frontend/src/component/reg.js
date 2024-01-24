@@ -6,14 +6,14 @@ class Reg extends React.Component {
         return (
             <div className="container">
                 <div className="form">
-                    <form action="/api/registration" method="POST">
+                    <form action="/api/auth/register" method="post">
                         <h1>Регистрация</h1>
                         <label>Логин</label>
-                        <input name="login"/>
+                        <input name="login" />
                         <label>Пароль</label>
-                        <input name="password"/>
+                        <input name="password" />
                         <label>Электронная почта</label>
-                        <input name="mail"/>
+                        <input name="email" />
                         <input type='submit' value='Войти'/>
                     </form>
                     <div className="urls">
