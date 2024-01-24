@@ -116,10 +116,15 @@ auth.post('/login', function (req, res, next) {
   if (loginOrMail === undefined || password === undefined) {
     res.sendStatus(400);
     return;
-  }
-  else if (Object.keys(req.cookies).length > 0) {
-    res.sendStatus(200);
-    return; // If the user has cookies, the user is redirected to the home page 
+  } else if (Object.keys(req.cookies).length > 0) {
+    if (!(Object.keys(req.cookies)[0] in Object.keys(cookies))) {
+      let token = req.cookies;
+      delete cookies[token];
+      res.clearCookie(token);
+    } else {
+      res.sendStatus(200)
+      return; // If the user has cookies, the user is redirected to the home page 
+    }
   }
 
   // check info
