@@ -122,7 +122,11 @@ auth.post('/login', upload.none(), (req, res, next) => {
   loginOrMail = req.body["loginOrMail"];
   password = req.body["password"];
 
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+
   if (!(loginOrMail.length && password.length)) {
+    res.statusMessage = "missing meaning"
     res.sendStatus(400);
     return;
   } else if (Object.keys(req.cookies).length > 0) {
@@ -139,17 +143,25 @@ auth.post('/login', upload.none(), (req, res, next) => {
   // check info
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
-      connection.query("SELECT * FROM Users WHERE ? IN (email, login) AND password = ? LIMIT 1",
-        [loginOrMail, password], function (err, result) {
-          if (err) 
+      connection.query("SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1",
+        [loginOrMail], function (err, result) {
+          if (err)
             reject(err);
-          if ((result[0]["login"] == loginOrMail || result[0]["email"] == loginOrMail) && result[0]["password"] == password)
-            resolve(result);
-          else
-            resolve(401);
+
+          if (result && result.length > 0) {
+            if (result[0]["password"] == password)
+              resolve(result);
+            else {
+              res.statusMessage = "invalid password"
+              resolve(401);
+            }
+          } else {
+            res.statusMessage = "account not found"
+            resolve(401); // Если нет результатов, то считаем, что пользователь не найден
+          }
         })
-    })
-  })
+    });
+  });
 
   promise.then((value) => {
     if (value == 401)
@@ -158,20 +170,17 @@ auth.post('/login', upload.none(), (req, res, next) => {
       // создаем и сохраняем токен
       let info = { login: value[0]["login"], email: value[0]["email"], password: value[0]["password"] }
       let accessToken = jwt.sign({ login: info.login, email: info.email }, accessTokenSecret);
-      cookies[accessToken] = {
-        login: info.login,
-        password: info.password,
-        email: info.email
-      };
+      cookies[accessToken] = info;
 
       res.cookie(accessToken);
       res.sendStatus(200);
     }
   });
+
   promise.catch((value) => {
     res.sendStatus(500);
-  })
-})
+  });
+});
 
 // logout
 auth.post('/logout', function (req, res, next) {
