@@ -28,7 +28,7 @@ class Reg extends React.Component {
         const form = document.getElementById("form");
         let formData = new FormData(form);
 
-        fetch('http://127.0.0.1:3000/api/auth/register', {
+        fetch('/api/auth/register', {
             method: 'POST',
             body: formData
         })
@@ -43,7 +43,7 @@ class Reg extends React.Component {
                         case "missing meaning":
                             this.setState({
                                 status: {
-                                    message: "Введите пропущенное поле",
+                                    message: "Заполните пропущенное поле",
                                     statusCode: 400
                                 }
                             });
@@ -79,7 +79,12 @@ class Reg extends React.Component {
                 }
             })
             .catch(error => {
-                console.error('Произошла ошибка при отправке запроса:', error);
+                this.setState({
+                    status: {
+                        message: "Произошла ошибка при отправке запроса, попробуйте позже",
+                        statusCode: 500
+                    }
+                })
             });
     }
 
