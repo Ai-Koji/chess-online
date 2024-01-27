@@ -28,14 +28,14 @@ input:focus {
     outline-width: 0;
 }
 
-input[type="submit"] {
+input[type="button"] {
     margin-top: 40px;
     background-color: rgb(42, 128, 194);
     transition: all 0.5s;
     color: rgb(224, 224, 224);
 }
 
-input[type="submit"]:hover {
+input[type="button"]:hover {
     background-color: rgb(123, 123, 123);
 }
 

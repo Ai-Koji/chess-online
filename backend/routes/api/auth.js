@@ -154,7 +154,7 @@ auth.post('/login', function (req, res, next) {
       cookies[accessToken] = {
         login: info.login,
         password: info.password,
-        email: info.emailu
+        email: info.email
       };
 
       res.cookie(accessToken);
