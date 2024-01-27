@@ -2,7 +2,12 @@ var express = require('express');
 var auth = express.Router();
 var jwt = require('jsonwebtoken');
 const mysql = require('mysql');
-const { MYSQL } = require('../../settings')
+const { MYSQL } = require('../../settings');
+const { emit } = require('nodemon');
+const multer = require('multer');
+const upload = multer();
+
+
 
 const accessTokenSecret = 'MkgmXSSxpOTgpNLGNNueyQHzZmHbgQiCOGAMKOtAmvcqcYUYCJTeWKWqBrbbGatkYLiIRvRimuvAOnltiLSvzFyPpakmxHinYSwy';
 // {token: info(login, password, email)}
@@ -18,13 +23,17 @@ const connection = mysql.createConnection({
 connection.connect();
 
 // register page
-auth.post('/register', function (req, res, next) {
+auth.post('/register', upload.none(), (req, res, next) => {
   login = req.body["login"];
   password = req.body["password"];
   email = req.body["email"];
 
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+
   //check info
-  if (login === undefined || password === undefined || email === undefined) {
+  if (!(login.length && password.length && email.length)) {
+    res.statusMessage = "missing meaning"
     res.sendStatus(400);
     return
   } else if (Object.keys(req.cookies).length > 0) {
@@ -70,13 +79,15 @@ auth.post('/register', function (req, res, next) {
   checkLogin(login)
     .then((isUse) => {
       if (isUse) {
-        res.sendStatus(412);
+        res.statusMessage = "login is already in use"
+        res.sendStatus(400);
         return;
       }
       checkEmail(email)
         .then((isUse) => {
           if (isUse) {
-            res.sendStatus(412);
+            res.statusMessage = "email is already in use"
+            res.sendStatus(400);
             return;
           }
 
@@ -98,22 +109,20 @@ auth.post('/register', function (req, res, next) {
           return;
         })
         .catch((error) => {
-          console.error("Ошибка выполнения запроса:", error);
           res.sendStatus(500);
         })
     })
     .catch((error) => {
-      console.error("Ошибка выполнения запроса:", error);
       res.sendStatus(500);
     })
 });
 
 // login page
-auth.post('/login', function (req, res, next) {
+auth.post('/login', upload.none(), (req, res, next) => {
   loginOrMail = req.body["loginOrMail"];
   password = req.body["password"];
 
-  if (loginOrMail === undefined || password === undefined) {
+  if (!(loginOrMail.length && password.length)) {
     res.sendStatus(400);
     return;
   } else if (Object.keys(req.cookies).length > 0) {
@@ -132,10 +141,8 @@ auth.post('/login', function (req, res, next) {
     setTimeout(() => {
       connection.query("SELECT * FROM Users WHERE ? IN (email, login) AND password = ? LIMIT 1",
         [loginOrMail, password], function (err, result) {
-          if (err) {
-            console.error("Ошибка выполнения запроса:", err);
+          if (err) 
             reject(err);
-          }
           if ((result[0]["login"] == loginOrMail || result[0]["email"] == loginOrMail) && result[0]["password"] == password)
             resolve(result);
           else
