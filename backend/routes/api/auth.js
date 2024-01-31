@@ -192,4 +192,7 @@ auth.post('/logout', function (req, res, next) {
   res.sendStatus(200);
 })
 
+auth.getCookies = function () {
+  return cookies;
+};
 module.exports = auth;
