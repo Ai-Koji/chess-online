@@ -15,10 +15,10 @@ router.get('/debut-base', function(req, res, next) {
 router.get('/forum', function(req, res, next) {
   res.render('index');
 });
-router.get('/login', function(req, res, next) {
+router.get('/auth/login', function(req, res, next) {
   res.render('index');
 });
-router.get('/registration', function(req, res, next) {
+router.get('/auth/registration', function(req, res, next) {
   res.render('index');
 });
 

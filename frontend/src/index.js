@@ -23,11 +23,11 @@ const App = () => (
     <Route path="/debut-base/debut" element={<Debut />} /> {}
     <Route path="/begin-base" element={<BeginBase />} /> {}
     <Route path="/forum" element={<Forum />} /> {}
-    <Route path="/forum-list" element={<ForumList />} /> {}
-    <Route path="/forumpage" element={<ForumPage />} /> {}
-    <Route path="/forum-create-topic" element={<CreateTopic />} /> {}
-    <Route path="/login" element={<Login />} /> {}
-    <Route path="/registration" element={<Reg />} /> {}
+    <Route path="/forum/discussions/*" element={<ForumList />} /> {}
+    <Route path="/forum/discussion/*" element={<ForumPage />} /> {}
+    <Route path="/forum/forum-create-discussion" element={<CreateTopic />} /> {}
+    <Route path="/auth/login" element={<Login />} /> {}
+    <Route path="/auth/registration" element={<Reg />} /> {}
   </Routes>
 );
 

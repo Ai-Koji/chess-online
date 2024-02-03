@@ -104,7 +104,7 @@ class Login extends React.Component {
                         <input type="submit" value='Войти' />
                     </form>
                     <div className="urls">
-                        <a href='/registration'>Регистрация</a>
+                        <a href='/auth/registration'>Регистрация</a>
                     </div>
                     <this.Status />
                 </div>

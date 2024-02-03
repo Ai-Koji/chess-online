@@ -107,7 +107,7 @@ class Reg extends React.Component {
                         <input type="submit" value="зарегистрироваться" />
                     </form>
                     <div className="urls">
-                        <a href='/login'>Авторизация</a>
+                        <a href='/auth/login'>Авторизация</a>
                     </div>
                     <this.Status />
                 </div>
