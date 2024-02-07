@@ -48,6 +48,7 @@ sqlCode = [
   `CREATE TABLE IF NOT EXISTS Forums (
     id INT AUTO_INCREMENT PRIMARY KEY,
     header TEXT NOT NULL,
+    about TEXT NOT NULL,
     topic_count INT DEFAULT 0,
     messages_count INT DEFAULT 0 
   );`,
@@ -55,8 +56,10 @@ sqlCode = [
   `CREATE TABLE IF NOT EXISTS Discussions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     forum_class_id INT NOT NULL,
+    author INT NOT NULL,
     header TEXT,
     create_date DATETIME,
+    FOREIGN KEY (author) REFERENCES Users (id),
     FOREIGN KEY (forum_class_id) REFERENCES Forums (id)
   );`,
   // Answer
