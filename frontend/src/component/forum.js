@@ -1,13 +1,47 @@
 import React from 'react';
-import "../styles/forum.css";
-
-// to do:
-// добавить запросы
+import '../styles/forum.css';
 
 class Forum extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            forums: null
+        };
+    }
+
+    getForums = () => {
+        let bodyForums = [];
+        fetch('http://127.0.0.1:3000/api/forum/main')
+            .then((response) => response.json())
+            .then((result) => {
+                for (let index = 0; index < result.length; index++) {
+                    bodyForums.push(
+                        <tr>
+                            <td>
+                                <a href={`/forum/discussions/${result[index].id}`}>
+                                    <h1>{result[index].header}</h1>
+                                </a>
+                                <p>{result[index].about}</p>
+                            </td>
+                            <td>{result[index].topic_count}</td>
+                            <td>{result[index].messages_count}</td>
+                        </tr>
+                    );
+                }
+                this.setState({ forums: bodyForums });
+            })
+            .catch((result) => {
+                console.log(result);
+            });
+    };
+
+    componentDidMount() {
+        this.getForums();
+    }
+
     render() {
         return (
-            <div className="container" style={{display: "block"}}>
+            <div className="container" style={{ display: 'block' }}>
                 <div className="header">
                     <h1>cheeeeeess forum</h1>
                     <input placeholder="Поиск" className="search-input" />
@@ -17,34 +51,14 @@ class Forum extends React.Component {
                         <tr>
                             <th className="subject"></th>
                             <th>Темы</th>
-                            <th>сообщения</th>
-                            <th>последнее сообщение</th>
+                            <th>Сообщений</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <a href="">
-                                    <h1>General Chess Discussion</h1>
-                                </a>
-                                    <p>The place to discuss general chess topics</p>
-                            </td>
-                            <td>65 097</td>
-                            <td>582 657</td>
-                            <td>
-                                <a href="">
-                                    5 минут назад
-                                    <div className="author">
-                                        WindyPawns
-                                    </div>
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody>{this.state.forums}</tbody>
                 </table>
             </div>
-        )
+        );
     }
 }
 
-export default Forum
+export default Forum;

@@ -18,9 +18,9 @@ class CreateTopic extends React.Component{
                 <hr />
                 <div className="answer-form">
                     <form action="/submit" method="post">
-                        <h1>Ответить</h1>
+                        <h1>Создать тему</h1>
 
-                        <label>Тема</label>
+                        <label>Заголовок темы</label>
                         <input type="text" />
 
                         <label>Сообщение</label>
