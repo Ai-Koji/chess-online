@@ -9,7 +9,11 @@ const upload = multer();
 const accessTokenSecret =
   'MkgmXSSxpOTgpNLGNNueyQHzZmHbgQiCOGAMKOtAmvcqcYUYCJTeWKWqBrbbGatkYLiIRvRimuvAOnltiLSvzFyPpakmxHinYSwy';
 // {token: {login, password, email}]}
-cookies = {};
+// test3
+// 1234
+cookies = {
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjIsImxvZ2luIjoidGVzdDMiLCJlbWFpbCI6IjEyMzQ0MzIxIiwiaWF0IjoxNzA4MDk5MzMzfQ.Fw68xHioBA-26nRWxXKiRRyFG6IhIBmqrjv07VR5v4s': {login: "test3", password: "1234"}
+};
 
 // connect to mysql server
 const connection = mysql.createConnection({
@@ -19,6 +23,18 @@ const connection = mysql.createConnection({
   database: 'chess_online',
 });
 connection.connect();
+
+
+// check cookie, login, password
+auth.use((req, res, next) => {
+  let token = Object.keys(req.cookies)[0];
+  if (Object.keys(req.cookies).length > 0) {
+    if (!(token in cookies)) {
+      res.clearCookie(token);
+    }
+  }
+  next()
+})
 
 // register page
 auth.post('/register', upload.none(), (req, res) => {
@@ -35,14 +51,8 @@ auth.post('/register', upload.none(), (req, res) => {
     res.sendStatus(400);
     return;
   } else if (Object.keys(req.cookies).length > 0) {
-    if (!(Object.keys(req.cookies)[0] in Object.keys(cookies))) {
-      let token = req.cookies;
-      delete cookies[token];
-      res.clearCookie(token);
-    } else {
-      res.sendStatus(200);
-      return; // If the user has cookies, the user is redirected to the home page
-    }
+    res.sendStatus(200);
+    return; // If the user has cookies, the user is redirected to the home page
   }
 
   // Checking the login for universality
@@ -146,34 +156,34 @@ auth.post('/login', upload.none(), (req, res) => {
     res.sendStatus(400);
     return;
   } else if (Object.keys(req.cookies).length > 0) {
-    if (!(token in Object.keys(cookies))) res.clearCookie(token);
-    else {
-      res.sendStatus(200);
-      return; // If the user has cookies, the user is redirected to the home page
-    }
+    res.sendStatus(200);
+    return; // If the user has cookies, the user is redirected to the home page
   }
 
   // check info
-  connection.query(
-    'SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1',
-    [loginOrMail],
-    (err, result) => {
-      if (err) reject(err);
-
-      if (result && result.length > 0) {
-        if (result[0]['password'] == password) resolve(result);
-        else {
-          res.statusMessage = 'invalid password';
-          resolve(401);
+  function checkUser(loginOrMail, password) {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1',
+        [loginOrMail],
+        (err, result) => {
+          if (err) reject(err);
+  
+          if (result && result.length > 0) {
+            if (result[0]['password'] === password) resolve(result);
+            else {
+              res.statusMessage = 'invalid password';
+              resolve(401);
+            }
+          } else {
+            res.statusMessage = 'account not found';
+            resolve(401); // Если нет результатов, то считаем, что пользователь не найден
+          }
         }
-      } else {
-        res.statusMessage = 'account not found';
-        resolve(401); // Если нет результатов, то считаем, что пользователь не найден
-      }
-    }
-  );
-
-  promise.then((value) => {
+      );
+    });
+  }
+  checkUser(loginOrMail, password).then((value) => {
     if (value == 401) res.sendStatus(401);
     else {
       // создаем и сохраняем токен
@@ -192,9 +202,8 @@ auth.post('/login', upload.none(), (req, res) => {
       res.cookie(accessToken);
       res.sendStatus(200);
     }
-  });
-
-  promise.catch((value) => {
+  })
+  .catch((value) => {
     res.sendStatus(500);
   });
 });
