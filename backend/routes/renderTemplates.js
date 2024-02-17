@@ -9,16 +9,19 @@ router.get('/', function(req, res, next) {
 router.get('/board', function(req, res, next) {
   res.render('index');
 });
-router.get('/debut-base', function(req, res, next) {
+router.get('/debut-base*', function(req, res, next) {
   res.render('index');
 });
-router.get('/forum', function(req, res, next) {
+router.get('/forum*', function(req, res, next) {
   res.render('index');
 });
 router.get('/auth/login', function(req, res, next) {
   res.render('index');
 });
 router.get('/auth/registration', function(req, res, next) {
+  res.render('index');
+});
+router.get('/auth/logout', function(req, res, next) {
   res.render('index');
 });
 
