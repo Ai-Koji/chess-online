@@ -2,8 +2,6 @@ import React from 'react';
 import arrowBack from '../images/arrow-back.svg';
 import '../styles/forum-page.css';
 
-// to do:
-// сделать обработку запросов
 
 class ForumPage extends React.Component {
     constructor(props) {
@@ -16,12 +14,12 @@ class ForumPage extends React.Component {
     }
 
     answers = () => {
-        this.state.limit += 10
+        this.state.limit += 10;
         let bodyAnswers = [];
         const currentUrl = window.location.href;
         const parts = currentUrl.split('/');
         const lastNumber = parseInt(parts[parts.length - 1]);
-        fetch(`http://127.0.0.1:3000/api/forum/answers/${lastNumber}/${this.state.limit}`)
+        fetch(`/api/forum/answers/${lastNumber}/${this.state.limit}`)
             .then((response) => response.json())
             .then((result) => {
                 console.log(result)
@@ -51,6 +49,31 @@ class ForumPage extends React.Component {
             });
     };
 
+    sendAnswer = (event) => {
+        event.preventDefault();
+
+        const form = document.getElementById("form");
+        let formData = new FormData(form);
+
+        const currentUrl = window.location.href;
+        const parts = currentUrl.split('/');
+        const discussionId = parseInt(parts[parts.length - 1]);
+        fetch(`/api/forum/answer/${discussionId}`, {
+            method: 'POST',
+            body: formData
+        })
+        // добавить статусы
+            .then(response => {
+                if (response.status === 200) {
+                    this.state.limit += 10;
+                    this.answers()
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     componentDidMount() {
         this.answers();
     }
@@ -58,11 +81,11 @@ class ForumPage extends React.Component {
     render() {
         const currentUrl = window.location.href;
         const parts = currentUrl.split('/');
-        const preLastNumber = parseInt(parts[parts.length - 2]);
+        const discussionsId = parseInt(parts[parts.length - 2]);
         return (
             <div className="container">
                 <div className="header">
-                    <a href= {`/forum/discussions/${ preLastNumber }`} className="back">
+                    <a href= {`/forum/discussions/${ discussionsId }`} className="back">
                         <img src={arrowBack} />
                     </a>
                     <h1>{ this.state.header }</h1>
@@ -72,7 +95,7 @@ class ForumPage extends React.Component {
                 </div>
                 <button className="show-more" onClick={this.answers}>Показать еще</button>
                 <div className="answer-form">
-                    <form action="/submit" method="post">
+                    <form id="form" onSubmit={this.sendAnswer}>
                         <h1>Ответить</h1>
                         <textarea
                             id="message"
@@ -81,7 +104,6 @@ class ForumPage extends React.Component {
                             placeholder="Введите ваше сообщение"
                             required
                         ></textarea>
-
                         <input type="submit" value="Отправить" />
                     </form>
                 </div>
