@@ -45,6 +45,9 @@ class ForumDiscussions extends React.Component {
     }
 
     render() {
+        const currentUrl = window.location.href;
+        const parts = currentUrl.split("/");
+        const lastNumber = parseInt(parts[parts.length - 1]);
         return (
             <div className="container" style={{ display: 'block' }}>
                 <div className="header">
@@ -52,7 +55,7 @@ class ForumDiscussions extends React.Component {
                         <img src={arrowBack} />
                     </a>
                     <h1>{this.state.header}</h1>
-                    <a href="/forum/forum-create-discussion" className="create">
+                    <a href={`/forum/forum-create-discussion/${lastNumber}`} className="create">
                         СОЗДАТЬ НОВУЮ ТЕМУ
                     </a>
                 </div>
