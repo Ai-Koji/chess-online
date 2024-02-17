@@ -114,3 +114,17 @@ input[type="submit"]:hover {
     background-color: #fff;
     color: #333;
 }
+
+
+.status {
+    width: 90%;
+    margin-top: 30px;
+    border: 5px solid rgb(47, 255, 0);
+    background-color: rgb(4, 101, 7);
+    padding: 2%;
+}
+
+.status-error {
+    border: 4px solid rgb(219, 0, 0);
+    background-color: rgb(166, 1, 1);
+}
