@@ -25,7 +25,7 @@ const App = () => (
     <Route path="/forum" element={<Forum />} /> {}
     <Route path="/forum/discussions/*" element={<ForumDiscussions />} /> {}
     <Route path="/forum/discussion/*" element={<ForumPage />} /> {}
-    <Route path="/forum/forum-create-discussion" element={<CreateTopic />} /> {}
+    <Route path="/forum/forum-create-discussion/*" element={<CreateTopic />} /> {}
     <Route path="/auth/login" element={<Login />} /> {}
     <Route path="/auth/registration" element={<Reg />} /> {}
   </Routes>
