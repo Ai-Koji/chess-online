@@ -147,7 +147,10 @@ auth.post('/register', upload.none(), (req, res) => {
                 password: password,
                 email: email,
               };
-              res.cookie(accessToken);
+              res.cookie(accessToken, '', {
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                httpOnly: true
+              });
               res.sendStatus(200);
             }
           });
@@ -215,8 +218,10 @@ auth.post('/login', upload.none(), (req, res) => {
           accessTokenSecret
         );
         cookies[accessToken] = info;
-
-        res.cookie(accessToken);
+        res.cookie(accessToken, '', {
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+          httpOnly: true
+        });
         res.sendStatus(200);
       }
     })
