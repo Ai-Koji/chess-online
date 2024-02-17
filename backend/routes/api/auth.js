@@ -9,11 +9,8 @@ const upload = multer();
 const accessTokenSecret =
   'MkgmXSSxpOTgpNLGNNueyQHzZmHbgQiCOGAMKOtAmvcqcYUYCJTeWKWqBrbbGatkYLiIRvRimuvAOnltiLSvzFyPpakmxHinYSwy';
 // {token: {login, password, email}]}
-// test3
-// 1234
-cookies = {
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjIsImxvZ2luIjoidGVzdDMiLCJlbWFpbCI6IjEyMzQ0MzIxIiwiaWF0IjoxNzA4MDk5MzMzfQ.Fw68xHioBA-26nRWxXKiRRyFG6IhIBmqrjv07VR5v4s': {login: "test3", password: "1234"}
-};
+
+cookies = {};
 
 // connect to mysql server
 const connection = mysql.createConnection({
@@ -27,13 +24,39 @@ connection.connect();
 
 // check cookie, login, password
 auth.use((req, res, next) => {
-  let token = Object.keys(req.cookies)[0];
-  if (Object.keys(req.cookies).length > 0) {
-    if (!(token in cookies)) {
-      res.clearCookie(token);
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+  let usersCookie = Object.keys(req.cookies);
+  const firstCookie = usersCookie[0];
+  if (usersCookie.length >= 1) {
+    if (!(firstCookie in cookies)) {
+      res.clearCookie(firstCookie);
     }
   }
   next()
+})
+
+auth.get('/islogin', upload.none(), (req, res) => {
+  let usersCookies = Object.keys(req.cookies);
+  const firstCookie = usersCookies[0];
+
+  res.set('Cache-Control', 'no-store'); 
+
+  if (usersCookies.length >= 1) {
+
+    if (firstCookie in cookies) {
+      res.json({
+        login: cookies[firstCookie].login
+      })
+    } else {
+      res.statusMessage = "cookies are out of date";
+      res.sendStatus(403);
+
+    }
+  } else {
+    res.statusMessage = "no cookies";
+    res.sendStatus(403)
+  }
 })
 
 // register page
@@ -41,9 +64,6 @@ auth.post('/register', upload.none(), (req, res) => {
   login = req.body['login'];
   password = req.body['password'];
   email = req.body['email'];
-
-  res.append('Access-Control-Allow-Origin', ['*']);
-  res.append('Access-Control-Allow-Headers', 'Content-Type');
 
   //check info
   if (!(login.length && password.length && email.length)) {
@@ -127,7 +147,6 @@ auth.post('/register', upload.none(), (req, res) => {
                 password: password,
                 email: email,
               };
-
               res.cookie(accessToken);
               res.sendStatus(200);
             }
@@ -146,9 +165,6 @@ auth.post('/register', upload.none(), (req, res) => {
 auth.post('/login', upload.none(), (req, res) => {
   const loginOrMail = req.body['loginOrMail'];
   const password = req.body['password'];
-
-  res.append('Access-Control-Allow-Origin', ['*']);
-  res.append('Access-Control-Allow-Headers', 'Content-Type');
 
   let token = Object.keys(req.cookies)[0];
   if (!(loginOrMail.length && password.length)) {
@@ -209,12 +225,13 @@ auth.post('/login', upload.none(), (req, res) => {
 });
 
 // logout
-auth.post('/logout', function (req, res, next) {
+auth.get('/logout', function (req, res, next) {
   // Processing cookie
-  let token = req.cookies;
+  let usersCookie = Object.keys(req.cookies);
+  const firstCookie = usersCookie[0];
 
-  delete cookies[token];
-  res.clearCookie(token);
+  delete cookies[firstCookie];
+  res.clearCookie(firstCookie);
   res.sendStatus(200);
 });
 
