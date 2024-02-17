@@ -199,29 +199,30 @@ auth.post('/login', upload.none(), (req, res) => {
       );
     });
   }
-  checkUser(loginOrMail, password).then((value) => {
-    if (value == 401) res.sendStatus(401);
-    else {
-      // создаем и сохраняем токен
-      let info = {
-        id: value[0]['login'],
-        login: value[0]['login'],
-        email: value[0]['email'],
-        password: value[0]['password'],
-      };
-      let accessToken = jwt.sign(
-        { id: info.id, login: info.login, email: info.email },
-        accessTokenSecret
-      );
-      cookies[accessToken] = info;
+  checkUser(loginOrMail, password)
+    .then((value) => {
+      if (value == 401) res.sendStatus(401);
+      else {
+        // создаем и сохраняем токен
+        let info = {
+          id: value[0]['id'],
+          login: value[0]['login'],
+          email: value[0]['email'],
+          password: value[0]['password'],
+        };
+        let accessToken = jwt.sign(
+          { id: info.id, login: info.login, email: info.email },
+          accessTokenSecret
+        );
+        cookies[accessToken] = info;
 
-      res.cookie(accessToken);
-      res.sendStatus(200);
-    }
-  })
-  .catch((value) => {
-    res.sendStatus(500);
-  });
+        res.cookie(accessToken);
+        res.sendStatus(200);
+      }
+    })
+    .catch((value) => {
+      res.sendStatus(500);
+    });
 });
 
 // logout
