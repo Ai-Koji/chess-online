@@ -17,7 +17,7 @@ connection.connect(function (err) {
 });
 
 // create DB
-connection.query('CREATE DATABASE IF NOT EXISTS chess_online', function (err) {
+connection.query(`CREATE DATABASE IF NOT EXISTS ${MYSQL.name}`, function (err) {
 	if (err) {
 		console.error('error to create DB: ' + err.stack);
 		return;

@@ -2,12 +2,11 @@ var express = require('express');
 var auth = express.Router();
 var jwt = require('jsonwebtoken');
 const mysql = require('mysql');
-const { MYSQL } = require('../../settings');
+const { MYSQL, TOKENSECRET, DATABASENAME } = require('../../settings');
 const multer = require('multer');
 const upload = multer();
 
-const accessTokenSecret =
-	'MkgmXSSxpOTgpNLGNNueyQHzZmHbgQiCOGAMKOtAmvcqcYUYCJTeWKWqBrbbGatkYLiIRvRimuvAOnltiLSvzFyPpakmxHinYSwy';
+const accessTokenSecret = TOKENSECRET;
 // {token: {login, password, email}]}
 
 cookies = {};
@@ -17,7 +16,7 @@ const connection = mysql.createConnection({
 	host: MYSQL.host,
 	user: MYSQL.user,
 	password: MYSQL.password,
-	database: 'chess_online'
+	database: MYSQL.name
 });
 connection.connect();
 
@@ -26,27 +25,22 @@ auth.use((req, res, next) => {
 	res.append('Access-Control-Allow-Origin', ['*']);
 	res.append('Access-Control-Allow-Headers', 'Content-Type');
 	let usersCookie = Object.keys(req.cookies);
-	const firstCookie = usersCookie[0];
-	if (usersCookie.length >= 1) {
-		if (!(firstCookie in cookies)) {
-			res.clearCookie(firstCookie);
-		}
-	}
+	if (usersCookie.length >= 1 && !(usersCookie[0] in cookies))
+		res.clearCookie(usersCookie[0]);
 	next();
 });
 
 auth.get('/islogin', upload.none(), (req, res) => {
-	let usersCookies = Object.keys(req.cookies);
-	const firstCookie = usersCookies[0];
+	let usersCookie = Object.keys(req.cookies);
 
 	res.set('Cache-Control', 'no-store');
 
-	if (usersCookies.length >= 1) {
-		if (firstCookie in cookies) {
+	if (usersCookie.length >= 1) {
+		if (usersCookie[0] in cookies)
 			res.json({
-				login: cookies[firstCookie].login
+				login: cookies[usersCookie[0]].login
 			});
-		} else {
+		else {
 			res.statusMessage = 'cookies are out of date';
 			res.sendStatus(403);
 		}
@@ -58,9 +52,9 @@ auth.get('/islogin', upload.none(), (req, res) => {
 
 // register page
 auth.post('/register', upload.none(), (req, res) => {
-	login = req.body['login'];
-	password = req.body['password'];
-	email = req.body['email'];
+	let login = req.body.login;
+	let password = req.body.password;
+	let email = req.body.email;
 
 	//check info
 	if (!(login.length && password.length && email.length)) {
@@ -72,16 +66,14 @@ auth.post('/register', upload.none(), (req, res) => {
 		return; // If the user has cookies, the user is redirected to the home page
 	}
 
-	// Checking the login for universality
+	// Func for checking the login for universality
 	const checkLogin = (login) => {
 		return new Promise((resolve, reject) => {
 			connection.query(
 				'SELECT 1 FROM Users WHERE login = ?',
 				[login],
-				function (err, results) {
-					if (err) {
-						reject(err);
-					}
+				(err, results) => {
+					if (err) reject(err);
 					if (results.length > 0) resolve(true);
 					else resolve(false);
 				}
@@ -89,15 +81,14 @@ auth.post('/register', upload.none(), (req, res) => {
 		});
 	};
 
+	// Func for checking the email for universality
 	const checkEmail = (email) => {
 		return new Promise((resolve, reject) => {
 			connection.query(
 				'SELECT 1 FROM Users WHERE email = ?',
 				[email],
-				function (err, results) {
-					if (err) {
-						reject(err);
-					}
+				(err, results) => {
+					if (err) reject(err);
 					if (results.length > 0) resolve(true);
 					else resolve(false);
 				}
@@ -105,6 +96,7 @@ auth.post('/register', upload.none(), (req, res) => {
 		});
 	};
 
+	// Use functions
 	checkLogin(login)
 		.then((isUse) => {
 			if (isUse) {
@@ -124,60 +116,64 @@ auth.post('/register', upload.none(), (req, res) => {
 					sqlCode =
 						'INSERT INTO Users (login, password, email) VALUES (?, ?, ?)';
 					values = [login, password, email];
-					connection.query(sqlCode, values);
-
-					// get id and save token
-					sqlCode =
-						'SELECT id FROM Users WHERE login = ? AND password = ? AND email = ?';
-					connection.query(sqlCode, values, (err, result) => {
-						// create and save token
-						if (err) res.sendStatus(500);
-						else {
-							id = result[0].id;
-							let accessToken = jwt.sign(
-								{ id: id, login: login, email: email },
-								accessTokenSecret
-							);
-							cookies[accessToken] = {
-								id: id,
-								login: login,
-								password: password,
-								email: email
-							};
-							res.cookie(accessToken, '', {
-								maxAge: 1000 * 60 * 60 * 24 * 30,
-								httpOnly: true
+					connection.query(sqlCode, values, (err) => {
+						if (err) {
+							res.sendStatus(500);
+							return;
+						} else {
+							// get id
+							sqlCode =
+								'SELECT id FROM Users WHERE login = ? AND password = ? AND email = ?';
+							connection.query(sqlCode, values, (err, result) => {
+								// create and save token
+								if (err) res.sendStatus(500);
+								else {
+									id = result[0].id;
+									let accessToken = jwt.sign(
+										{ id: id, login: login, email: email },
+										accessTokenSecret
+									);
+									cookies[accessToken] = {
+										id: id,
+										login: login,
+										password: password,
+										email: email
+									};
+									res.cookie(accessToken, '', {
+										maxAge: 1000 * 60 * 60 * 24 * 30,
+										httpOnly: true
+									});
+									res.sendStatus(200);
+								}
 							});
-							res.sendStatus(200);
 						}
 					});
 				})
-				.catch((error) => {
+				.catch(() => {
 					res.sendStatus(500);
 				});
 		})
-		.catch((error) => {
+		.catch(() => {
 			res.sendStatus(500);
 		});
 });
 
 // login page
 auth.post('/login', upload.none(), (req, res) => {
-	const loginOrMail = req.body['loginOrMail'];
-	const password = req.body['password'];
+	const loginOrMail = req.body.loginOrMail;
+	const password = req.body.password;
 
-	let token = Object.keys(req.cookies)[0];
 	if (!(loginOrMail.length && password.length)) {
 		res.statusMessage = 'missing meaning';
 		res.sendStatus(400);
 		return;
 	} else if (Object.keys(req.cookies).length > 0) {
 		res.sendStatus(200);
-		return; // If the user has cookies, the user is redirected to the home page
+		return; // If the user has cookies, the user is redirected to the logout page
 	}
 
 	// check info
-	function checkUser(loginOrMail, password) {
+	checkUser = (loginOrMail, password) => {
 		return new Promise((resolve, reject) => {
 			connection.query(
 				'SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1',
@@ -193,22 +189,22 @@ auth.post('/login', upload.none(), (req, res) => {
 						}
 					} else {
 						res.statusMessage = 'account not found';
-						resolve(401); // Если нет результатов, то считаем, что пользователь не найден
+						resolve(401); // If there are no results, then the user is not identified
 					}
 				}
 			);
 		});
-	}
+	};
 	checkUser(loginOrMail, password)
 		.then((value) => {
 			if (value == 401) res.sendStatus(401);
 			else {
-				// создаем и сохраняем токен
+				value = value[0];
 				let info = {
-					id: value[0]['id'],
-					login: value[0]['login'],
-					email: value[0]['email'],
-					password: value[0]['password']
+					id: value.id,
+					login: value.login,
+					email: value.email,
+					password: value.password
 				};
 				let accessToken = jwt.sign(
 					{ id: info.id, login: info.login, email: info.email },
@@ -230,11 +226,10 @@ auth.post('/login', upload.none(), (req, res) => {
 // logout
 auth.get('/logout', function (req, res, next) {
 	// Processing cookie
-	let usersCookie = Object.keys(req.cookies);
-	const firstCookie = usersCookie[0];
+	let usersCookie = Object.keys(req.cookies)[0];
 
-	delete cookies[firstCookie];
-	res.clearCookie(firstCookie);
+	delete cookies[usersCookie];
+	res.clearCookie(usersCookie);
 	res.sendStatus(200);
 });
 
