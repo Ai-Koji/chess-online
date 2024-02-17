@@ -28,7 +28,7 @@ forum.get('/main', (req, res, next) => {
 });
 
 // send json: {header, discussions: [discussion...]}
-forum.get('/discussions/:forumId', upload.none(), (req, res, next) => {
+forum.get('/discussions/:forumId', upload.none(), (req, res) => {
     res.append('Access-Control-Allow-Origin', ['*']);
     res.append('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -63,7 +63,7 @@ forum.get('/discussions/:forumId', upload.none(), (req, res, next) => {
     );
 });
 
-forum.get('/answers/:discussionId/:limit', upload.none(), (req, res, next) => {
+forum.get('/answers/:discussionId/:limit', upload.none(), (req, res) => {
     res.append('Access-Control-Allow-Origin', ['*']);
     res.append('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -85,7 +85,6 @@ forum.get('/answers/:discussionId/:limit', upload.none(), (req, res, next) => {
 
     connection.query(sqlcode, (err, result) => {
         if (err) {
-            console.log(err);
             res.sendStatus(500);
         } else {
             connection.query(
@@ -101,42 +100,64 @@ forum.get('/answers/:discussionId/:limit', upload.none(), (req, res, next) => {
     });
 });
 
-forum.post(
-    '/discussions/create-discussion',
-    upload.none(),
-    (req, res, next) => {
-        res.append('Access-Control-Allow-Origin', ['*']);
-        res.append('Access-Control-Allow-Headers', 'Content-Type');
+forum.post('/answer/:discussionId', upload.none(), (req, res) => {
+    res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Headers', 'Content-Type');
 
-        cookies = auth.getCookies();
-        cookie = cookies[Object.keys(req.cookies)[0]];
+    cookies = auth.getCookies();
+    usersCookie = cookies[Object.keys(req.cookies)[0]];
 
-        if (!cookie) {
-            res.clearCookie(Object.keys(req.cookies)[0]);
-            res.sendStatus(403); // отправляем пользователя на страницу регистрации
-            return;
-        }
+    res.sendStatus(200)
+    return;
+});
 
-        let fodum_class_id = req.body['forum_class_id'];
-        let header = req.body['header'];
-        let author = cookie.id;
-        console.log(cookie, Object.keys(req.cookies)[0]);
-        res.sendStatus(200);
-        sqlcode = `
-    INSERT INTO Discussions (forum_class_id, header, create_date, author, create_date) 
-    VALUES (?, ?, ?, NOW()) `;
-        connection.query(
-            sqlcode,
-            [fodum_class_id, header, author],
-            (err, result) => {
-                if (err) {
-                    res.sendStatus(500);
-                } else {
-                    res.sendStatus(200);
-                }
-            }
-        );
+forum.post('/create-discussion', upload.none(), (req, res) => {
+    res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Headers', 'Content-Type');
+
+    let cookies = auth.getCookies();
+    let usersCookie = Object.keys(req.cookies)[0];
+
+    if (!(usersCookie in cookies)) {
+        // res.clearCookie(Object.keys(req.cookies)[0]);
+        res.statusMessage = 'no cookie';
+        res.sendStatus(403); // отправляем пользователя на страницу регистрации
+        return;
     }
-);
+
+    usersCookie = cookies[usersCookie];
+
+
+    let forum_class_id = req.body['forum_class_id'];
+    let header = req.body['header'];
+    let message = req.body['message'];
+    let author = usersCookie.id;
+
+    if (!(header && message)) {
+        res.statusMessage = 'missing meaning';
+        res.sendStatus(400)
+        return;
+    }
+    
+    sqlcode = `
+        INSERT INTO Discussions (forum_class_id, header, create_date, author, create_date) 
+        VALUES (?, ?, ?, NOW());
+        INSERT INTO Answers (user_id, discussion_id, content, answer_date)
+        VALUES (?, (SELECT MAX(id) FROM Discussions), ?, NOW());
+    `
+    
+    connection.query(sqlcode,[forum_class_id, header, author], (err) => {
+            if (err) res.sendStatus(500);
+            else {
+                connection.query(sqlcode2, [author, ], (err) => {
+                    if (err) res.sendStatus(500);
+                    else {
+                        res.sendStatus(200);
+                    }
+                })
+            }
+        }
+    );
+});
 
 module.exports = forum;
