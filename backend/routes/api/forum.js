@@ -106,7 +106,6 @@ forum.post('/answer/:discussionId', upload.none(), (req, res) => {
 forum.post('/create-discussion', upload.none(), (req, res) => {
 	let cookies = auth.getCookies();
 	let usersCookie = Object.keys(req.cookies)[0];
-
 	if (!(usersCookie in cookies)) {
 		res.clearCookie(Object.keys(req.cookies)[0]);
 		res.statusMessage = 'no cookie';
@@ -116,31 +115,35 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 
 	let forum_class_id = req.body.forum_class_id;
 	let header = req.body.header;
-	let message = req.body.message;
+	let content = req.body.message;
 	let author = cookies[usersCookie].id;
 
-	if (!(header && message)) {
+	if (!(header && content)) {
 		res.statusMessage = 'missing meaning';
 		res.sendStatus(400);
 		return;
 	}
 
-	sqlcode = `
-        INSERT INTO Discussions (forum_class_id, header, create_date, author, create_date) 
-        VALUES (?, ?, ?, NOW());
-        INSERT INTO Answers (user_id, discussion_id, content, answer_date)
-        VALUES (?, (SELECT MAX(id) FROM Discussions), ?, NOW());
-    `;
+	const sqlcode1 = `
+    INSERT INTO Discussions (forum_class_id, header, author, create_date) 
+    VALUES (?, ?, ?, NOW());
+	`;
 
-	connection.query(sqlcode, [forum_class_id, header, author], (err) => {
+	const sqlcode2 = `
+		INSERT INTO Answers (user_id, discussion_id, content, answer_date)
+		VALUES (?, (SELECT MAX(id) FROM Discussions), ?, NOW());
+	`;
+
+	connection.query(sqlcode1, [forum_class_id, header, author], (err, results1) => {
 		if (err) res.sendStatus(500);
 		else {
-			connection.query(sqlcode2, [author], (err) => {
+			connection.query(sqlcode2, [author, content], (err, results2) => {
 				if (err) res.sendStatus(500);
 				else res.sendStatus(200);
 			});
 		}
 	});
+
 });
 
 module.exports = forum;
