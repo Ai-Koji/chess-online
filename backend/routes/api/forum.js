@@ -61,10 +61,10 @@ forum.get('/discussions/:forumId', upload.none(), (req, res) => {
 });
 
 forum.get('/answers/:discussionId/:limit', upload.none(), (req, res) => {
-	limit = req.params.limit;
-	discussionId = req.params.discussionId;
+	let limit = req.params.limit;
+	let discussionId = req.params.discussionId;
 
-	sqlcode = `
+	let sqlcode = `
         SELECT 
             Answers.content as content, 
             DATE_FORMAT(Answers.answer_date, '%d %b %Y %H:%i:%s') as date, 
@@ -96,20 +96,47 @@ forum.get('/answers/:discussionId/:limit', upload.none(), (req, res) => {
 });
 
 forum.post('/answer/:discussionId', upload.none(), (req, res) => {
-	cookies = auth.getCookies();
-	usersCookie = cookies[Object.keys(req.cookies)[0]];
+	let cookies = auth.getCookies();
+	let usersCookie = Object.keys(req.cookies)[0];
 
-	res.sendStatus(200);
-	return;
+	if (!(usersCookie in cookies)) {
+		res.clearCookie(Object.keys(req.cookies)[0]);
+		res.statusMessage = 'no cookie';
+		res.sendStatus(403); // redirect user to login page
+		return;
+	}
+	usersCookie = cookies[usersCookie];
+
+	let discussionId = req.params.discussionId;
+	let content = req.body.message;
+	let author = usersCookie.id;
+
+	if (!content) {
+		res.statusMessage = 'missing meaning';
+		res.sendStatus(400);
+		return;
+	}
+
+	const sqlcode = `
+		INSERT INTO Answers (user_id, discussion_id, content, answer_date) 
+		VALUES (?, ?, ?, NOW());
+	`;
+	connection.query(sqlcode, [author, discussionId, content], (err) => {
+		if (err) {
+			console.log(err);
+			res.sendStatus(500);
+		} else res.sendStatus(200);
+	});
 });
 
 forum.post('/create-discussion', upload.none(), (req, res) => {
 	let cookies = auth.getCookies();
 	let usersCookie = Object.keys(req.cookies)[0];
+
 	if (!(usersCookie in cookies)) {
-		res.clearCookie(Object.keys(req.cookies)[0]);
+		res.clearCookie(usersCookie);
 		res.statusMessage = 'no cookie';
-		res.sendStatus(403); // redirect user to register page
+		res.sendStatus(403); // redirect user to login page
 		return;
 	}
 
@@ -134,16 +161,15 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 		VALUES (?, (SELECT MAX(id) FROM Discussions), ?, NOW());
 	`;
 
-	connection.query(sqlcode1, [forum_class_id, header, author], (err, results1) => {
+	connection.query(sqlcode1, [forum_class_id, header, author], (err) => {
 		if (err) res.sendStatus(500);
 		else {
-			connection.query(sqlcode2, [author, content], (err, results2) => {
+			connection.query(sqlcode2, [author, content], (err) => {
 				if (err) res.sendStatus(500);
 				else res.sendStatus(200);
 			});
 		}
 	});
-
 });
 
 module.exports = forum;
