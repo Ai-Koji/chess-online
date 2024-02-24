@@ -21,6 +21,7 @@ app.use('/static/', express.static(path.join(__dirname, 'build/static/')));
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
+app.use("/media", express.static(__dirname + '/media'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

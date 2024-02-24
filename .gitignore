@@ -12,6 +12,7 @@ build/Release
 # Dependency directories
 node_modules/
 build/
+media/
 jspm_packages/
 
 # Distribution directories
