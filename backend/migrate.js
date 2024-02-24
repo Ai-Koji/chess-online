@@ -74,7 +74,7 @@ sqlCode = [
 		FOREIGN KEY (discussion_id) REFERENCES Discussions (id)
   	);`,
 	// image
-	`CREATE TABLE IF NOT EXISTS Image (
+	`CREATE TABLE IF NOT EXISTS Images (
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		name VARCHAR(255),
 		URL TEXT
@@ -95,13 +95,13 @@ sqlCode = [
 		id INT AUTO_INCREMENT PRIMARY KEY,
 		book_class_id INT NOT NULL,
 		title VARCHAR(50),
-		cost INT DEFAULT NULL,
 		author VARCHAR(50) DEFAULT "",
-		image INT,
-		aboutBook TEXT,
-		pdf INT,
+		about TEXT DEFAULT NULL,
+		image INT DEFAULT NULL,
+		pdf INT DEFAULT NULL,
+		where_to_buy TEXT DEFAULT NULL,
 		FOREIGN KEY (book_class_id) REFERENCES Book_class (id),
-		FOREIGN KEY (image) REFERENCES Image (id),
+		FOREIGN KEY (image) REFERENCES Images (id),
 		FOREIGN KEY (pdf) REFERENCES  Pdf (id)
 	);`
 ];
