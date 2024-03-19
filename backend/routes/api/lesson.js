@@ -37,11 +37,30 @@ lesson.get('/main', (req, res) => {
         `,
 		(err, result) => {
 			if (err) res.sendStatus(500);
-			else {
-				res.send(result);
-			}
+			else res.json(result);
 		}
 	);
+});
+
+lesson.get('/lesson/:lessonId', (req, res) => {
+	let lessonId = Number(req.params.lessonId)
+	connection.query(
+		`
+		SELECT 
+			header,
+			game
+		FROM Lessons
+		WHERE id = ?;
+		`, [lessonId],
+		(err, result) => {
+			if (err) {
+				console.log(err);
+				res.sendStatus(500);
+			}
+			else res.json(result);
+		}
+	)
+
 });
 
 module.exports = lesson;
