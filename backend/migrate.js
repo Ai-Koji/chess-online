@@ -22,7 +22,7 @@ connection.query(`CREATE DATABASE IF NOT EXISTS ${MYSQL.name}`, function (err) {
 		console.error('error to create DB: ' + err.stack);
 		return;
 	}
-	console.log('База данных "mydatabase" успешно создана или уже существует');
+	console.log('База данных успешно создана или уже существует');
 });
 
 // use DB
@@ -103,6 +103,22 @@ sqlCode = [
 		FOREIGN KEY (book_class_id) REFERENCES Book_class (id),
 		FOREIGN KEY (image) REFERENCES Images (id),
 		FOREIGN KEY (pdf) REFERENCES  Pdf (id)
+	);`,
+	// Lessons_blocks
+	`CREATE TABLE IF NOT EXISTS Lessons_blocks (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		header VARCHAR(255)
+	);`,
+	// Lessons
+	`CREATE TABLE IF NOT EXISTS Lessons (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		header VARCHAR(255),
+		about TEXT,
+		game TEXT,
+		lesson_block INT,
+		image INT DEFAULT NULL, 
+		FOREIGN KEY (image) REFERENCES Images (id),
+		FOREIGN KEY (lesson_block) REFERENCES Lessons_blocks (id)
 	);`
 ];
 
