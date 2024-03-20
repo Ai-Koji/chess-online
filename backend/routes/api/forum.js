@@ -125,7 +125,21 @@ forum.post('/answer/:discussionId', upload.none(), (req, res) => {
 		if (err) {
 			console.log(err);
 			res.sendStatus(500);
-		} else res.sendStatus(200);
+		} else {	
+			res.sendStatus(200);
+			
+			connection.query(`
+				UPDATE Forums
+					SET messages_count = messages_count + 1
+				WHERE id IN (SELECT forum_class_id FROM Discussions WHERE id = ?);
+			`, [discussionId]);
+
+			connection.query(`
+				UPDATE Discussions
+					SET answer_count = answer_count + 1
+				WHERE id = ?;
+			`, [discussionId]);
+		};
 	});
 });
 
@@ -152,8 +166,8 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 	}
 
 	const sqlcode1 = `
-    INSERT INTO Discussions (forum_class_id, header, author, create_date) 
-    VALUES (?, ?, ?, NOW());
+		INSERT INTO Discussions (forum_class_id, header, author, create_date) 
+		VALUES (?, ?, ?, NOW());
 	`;
 
 	const sqlcode2 = `
@@ -166,7 +180,16 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 		else {
 			connection.query(sqlcode2, [author, content], (err) => {
 				if (err) res.sendStatus(500);
-				else res.sendStatus(200);
+				else {
+					res.sendStatus(200);
+					connection.query(`
+						UPDATE Forums
+							SET
+								topic_count = topic_count + 1,
+								messages_count = messages_count + 1
+						WHERE id = ?;
+					`, [forum_class_id]);
+				}
 			});
 		}
 	});
