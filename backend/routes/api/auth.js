@@ -230,7 +230,7 @@ auth.get('/logout', function (req, res, next) {
 
 	delete cookies[usersCookie];
 	res.clearCookie(usersCookie);
-	res.sendStatus(200);
+	res.redirect('/');
 });
 
 auth.getCookies = function () {
