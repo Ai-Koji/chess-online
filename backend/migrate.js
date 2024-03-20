@@ -58,7 +58,7 @@ sqlCode = [
 		forum_class_id INT NOT NULL,
 		author INT NOT NULL,
 		header TEXT,
-		answer_count INT,
+		answer_count INT DEFAULT 0,
 		create_date DATETIME,
 		FOREIGN KEY (author) REFERENCES Users (id),
 		FOREIGN KEY (forum_class_id) REFERENCES Forums (id)
