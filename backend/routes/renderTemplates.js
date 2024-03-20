@@ -12,7 +12,19 @@ router.get('/board', function (req, res, next) {
 router.get('/debut-base*', function (req, res, next) {
 	res.render('index');
 });
-router.get('/forum*', function (req, res, next) {
+router.get('/forum/*', function (req, res, next) {
+	res.render('index');
+});
+router.get('/library', function (req, res, next) {
+	res.render('index');
+});
+router.get('/beginner-lessons', function (req, res, next) {
+	res.render('index');
+});
+router.get('/beginner-lessons/lesson/*', function (req, res, next) {
+	res.render('index');
+});
+router.get('/library/book/*', function (req, res, next) {
 	res.render('index');
 });
 router.get('/auth/login', function (req, res, next) {
