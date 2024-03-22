@@ -1,6 +1,5 @@
 var express = require('express');
 var lesson = express.Router();
-var jwt = require('jsonwebtoken');
 const mysql = require('mysql');
 const { MYSQL, TOKENSECRET, DATABASENAME } = require('../../settings');
 const multer = require('multer');
@@ -53,10 +52,7 @@ lesson.get('/lesson/:lessonId', (req, res) => {
 		WHERE id = ?;
 		`, [lessonId],
 		(err, result) => {
-			if (err) {
-				console.log(err);
-				res.sendStatus(500);
-			}
+			if (err) res.sendStatus(500);
 			else res.json(result);
 		}
 	)
