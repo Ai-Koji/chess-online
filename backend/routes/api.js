@@ -3,11 +3,13 @@ var auth = require('./api/auth');
 var forum = require('./api/forum');
 var library = require('./api/library');
 var lesson = require('./api/lesson');
+var debut = require('./api/debut');
 var api = express.Router();
 
 api.use('/auth', auth);
 api.use('/forum', forum);
 api.use('/lessons', lesson);
+api.use('/debuts', debut);
 api.use('/library', library);
 
 module.exports = api;
