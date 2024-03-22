@@ -36,7 +36,7 @@ connection.query('USE chess_online', function (err) {
 
 // create tables
 console.log('create tables');
-sqlCode = [
+let sqlCode = [
 	// Users
 	`CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -102,7 +102,7 @@ sqlCode = [
         where_to_buy TEXT DEFAULT NULL,
         FOREIGN KEY (book_class_id) REFERENCES Book_class (id),
         FOREIGN KEY (image_id) REFERENCES Images (id),
-        FOREIGN KEY (pdf_id) REFERENCES  Pdf (id)
+        FOREIGN KEY (pdf_id) REFERENCES Pdf (id)
     );`,
 	// Lessons_blocks
 	`CREATE TABLE IF NOT EXISTS Lessons_blocks (
@@ -112,13 +112,22 @@ sqlCode = [
 	// Lessons
 	`CREATE TABLE IF NOT EXISTS Lessons (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        header VARCHAR(255) IS NOT NULL,
+        header VARCHAR(255) NOT NULL,
         about TEXT,
         game TEXT,
-        lesson_block_id INT IS NOT NULL,
+        lesson_block_id INT NOT NULL,
         image_id INT DEFAULT NULL, 
         FOREIGN KEY (image_id) REFERENCES Images (id),
         FOREIGN KEY (lesson_block_id) REFERENCES Lessons_blocks (id)
+    );`,
+	// Debuts
+	`CREATE TABLE IF NOT EXISTS Debuts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        header VARCHAR(255) NOT NULL,
+        user_id INT DEFAULT NULL,
+        mainFEN TEXT DEFAULT NULL,
+        game TEXT,
+        FOREIGN KEY (user_id) REFERENCES Users (id)
     );`
 ];
 
