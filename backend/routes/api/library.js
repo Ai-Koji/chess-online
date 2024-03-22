@@ -17,9 +17,6 @@ connection.connect();
 library.use((req, res, next) => {
 	res.append('Access-Control-Allow-Origin', ['*']);
 	res.append('Access-Control-Allow-Headers', 'Content-Type');
-	let usersCookie = Object.keys(req.cookies);
-	if (usersCookie.length >= 1 && !(usersCookie[0] in cookies))
-		res.clearCookie(usersCookie[0]);
 	next();
 });
 
@@ -42,8 +39,8 @@ library.get('/main', upload.none(), (req, res) => {
                     Images.URL AS imageUrl
                 FROM 
                     Books
-                INNER JOIN 
-                    Images ON Books.image = Images.id
+                LEFT JOIN 
+                    Images ON Books.image_id = Images.id
                 WHERE 
                     Books.book_class_id = ?;
 			`;
@@ -54,18 +51,15 @@ library.get('/main', upload.none(), (req, res) => {
 					if (err) {
 						res.sendStatus(500);
 						isError = true;
-					} else {
+					} else 
 						books.push({
 							header: item.header,
 							bookList: result2
 						});
-					}
 
-					if (count === result.length) {
-						if (!isError) {
+					if (count === result.length) 
+						if (!isError)
 							res.json(books);
-						}
-					}
 				});
 			});
 		}

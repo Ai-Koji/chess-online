@@ -30,10 +30,10 @@ lesson.get('/main', (req, res) => {
             Lessons.id AS lesson_id,
             Lessons.header AS lesson_header,
             Lessons.about AS lesson_about,
-            Lessons.image AS lesson_image,
-            Lessons.lesson_block AS lesson_block
+            Lessons.image_id AS lesson_image,
+            Lessons.lesson_block_id AS lesson_block
         FROM Lessons_blocks
-        INNER JOIN Lessons ON Lessons.lesson_block = Lessons_blocks.id
+        INNER JOIN Lessons ON Lessons.lesson_block_id = Lessons_blocks.id
         `,
 		(err, result) => {
 			if (err) res.sendStatus(500);

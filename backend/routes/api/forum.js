@@ -37,27 +37,33 @@ forum.get('/discussions/:forumId', upload.none(), (req, res) => {
 		return;
 	}
 
-	connection.query(
-		"SELECT id, header, answer_count, DATE_FORMAT(create_date, '%d %b %Y') AS create_date FROM Discussions WHERE forum_class_id = ?;",
-		[forumId],
-		(err, result1) => {
-			if (err) res.sendStatus(500);
-			else {
-				connection.query(
-					'SELECT header FROM Forums WHERE id = ?;',
-					[forumId],
-					(err, result2) => {
-						if (err) res.sendStatus(500);
-						else
-							res.json({
-								header: result2[0].header,
-								discussions: result1
-							});
-					}
-				);
-			}
+	let sqlcode = `
+		SELECT 
+			id, 
+			header, 
+			answer_count, 
+			DATE_FORMAT(create_date, '%d %b %Y') AS create_date 
+		FROM Discussions 
+		WHERE forum_id = ?;
+	`;
+
+	connection.query(sqlcode, [forumId], (err, result1) => {
+		if (err) res.sendStatus(500);
+		else {
+			connection.query(
+				'SELECT header FROM Forums WHERE id = ?;',
+				[forumId],
+				(err, result2) => {
+					if (err) res.sendStatus(500);
+					else
+						res.json({
+							header: result2[0].header,
+							discussions: result1
+						});
+				}
+			);
 		}
-	);
+	});
 });
 
 forum.get('/answers/:discussionId/:limit', upload.none(), (req, res) => {
@@ -69,7 +75,7 @@ forum.get('/answers/:discussionId/:limit', upload.none(), (req, res) => {
             Answers.content as content, 
             DATE_FORMAT(Answers.answer_date, '%d %b %Y %H:%i:%s') as date, 
             Users.login as username,
-            IF(Users.id = (SELECT author FROM Discussions WHERE id = ${discussionId}), 1, 0) AS isAuthor
+            IF(Users.id = (SELECT user_id FROM Discussions WHERE id = ${discussionId}), 1, 0) AS isAuthor
         FROM Answers 
         LEFT JOIN Users ON Users.id = Answers.user_id 
         WHERE Answers.discussion_id = ${discussionId} 
@@ -109,7 +115,7 @@ forum.post('/answer/:discussionId', upload.none(), (req, res) => {
 
 	let discussionId = req.params.discussionId;
 	let content = req.body.message;
-	let author = usersCookie.id;
+	let user_id = usersCookie.id;
 
 	if (!content) {
 		res.statusMessage = 'missing meaning';
@@ -121,25 +127,29 @@ forum.post('/answer/:discussionId', upload.none(), (req, res) => {
 		INSERT INTO Answers (user_id, discussion_id, content, answer_date) 
 		VALUES (?, ?, ?, NOW());
 	`;
-	connection.query(sqlcode, [author, discussionId, content], (err) => {
-		if (err) {
-			console.log(err);
-			res.sendStatus(500);
-		} else {	
+	connection.query(sqlcode, [user_id, discussionId, content], (err) => {
+		if (err) res.sendStatus(500);
+		else {
 			res.sendStatus(200);
-			
-			connection.query(`
+
+			connection.query(
+				`
 				UPDATE Forums
 					SET messages_count = messages_count + 1
-				WHERE id IN (SELECT forum_class_id FROM Discussions WHERE id = ?);
-			`, [discussionId]);
+				WHERE id IN (SELECT forum_id FROM Discussions WHERE id = ?);
+			`,
+				[discussionId]
+			);
 
-			connection.query(`
+			connection.query(
+				`
 				UPDATE Discussions
 					SET answer_count = answer_count + 1
 				WHERE id = ?;
-			`, [discussionId]);
-		};
+			`,
+				[discussionId]
+			);
+		}
 	});
 });
 
@@ -154,10 +164,10 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 		return;
 	}
 
-	let forum_class_id = req.body.forum_class_id;
+	let forum_id = req.body.forum_class_id;
 	let header = req.body.header;
 	let content = req.body.message;
-	let author = cookies[usersCookie].id;
+	let user_id = cookies[usersCookie].id;
 
 	if (!(header && content)) {
 		res.statusMessage = 'missing meaning';
@@ -166,29 +176,30 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 	}
 
 	const sqlcode1 = `
-		INSERT INTO Discussions (forum_class_id, header, author, create_date) 
-		VALUES (?, ?, ?, NOW());
+		INSERT INTO Discussions (forum_id, header, user_id) 
+		VALUES (?, ?, ?);
 	`;
 
 	const sqlcode2 = `
-		INSERT INTO Answers (user_id, discussion_id, content, answer_date)
-		VALUES (?, (SELECT MAX(id) FROM Discussions), ?, NOW());
+		INSERT INTO Answers (user_id, discussion_id, content)
+		VALUES (?, (SELECT MAX(id) FROM Discussions), ?);
 	`;
 
-	connection.query(sqlcode1, [forum_class_id, header, author], (err) => {
+	connection.query(sqlcode1, [forum_id, header, user_id], (err) => {
 		if (err) res.sendStatus(500);
 		else {
-			connection.query(sqlcode2, [author, content], (err) => {
+			connection.query(sqlcode2, [user_id, content], (err) => {
 				if (err) res.sendStatus(500);
 				else {
 					res.sendStatus(200);
-					connection.query(`
+					let sqlcode3 = `
 						UPDATE Forums
 							SET
 								topic_count = topic_count + 1,
 								messages_count = messages_count + 1
 						WHERE id = ?;
-					`, [forum_class_id]);
+					`;
+					connection.query(sqlcode3, [forum_id]);
 				}
 			});
 		}
