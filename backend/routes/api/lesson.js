@@ -1,9 +1,7 @@
 var express = require('express');
 var lesson = express.Router();
 const mysql = require('mysql');
-const { MYSQL, TOKENSECRET, DATABASENAME } = require('../../settings');
-const multer = require('multer');
-const upload = multer();
+const { MYSQL } = require('../../settings');
 
 // connect to mysql server
 const connection = mysql.createConnection({
@@ -14,7 +12,7 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-lesson.use((req, res, next) => {
+lesson.use((_, res, next) => {
 	res.append('Access-Control-Allow-Origin', ['*']);
 	res.append('Access-Control-Allow-Headers', 'Content-Type');
 	next();

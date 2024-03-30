@@ -19,9 +19,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/static/', express.static(path.join(__dirname, 'build/static/')));
 
-app.use('/', indexRouter);
 app.use('/api', apiRouter);
-app.use("/media", express.static(__dirname + '/media'));
+app.use('/media', express.static(__dirname + '/media'));
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -40,10 +40,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
-
-/*
-  - сделать build в frontend
-  - перенести build в папку backend
-  - перенести build/index.html в views/
-  - переименовать index.html на index.hbs
-*/

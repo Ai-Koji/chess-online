@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-forum.use((req, res, next) => {
+forum.use((_, res, next) => {
 	res.append('Access-Control-Allow-Origin', ['*']);
 	res.append('Access-Control-Allow-Headers', 'Content-Type');
 	next();

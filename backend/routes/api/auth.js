@@ -2,7 +2,7 @@ var express = require('express');
 var auth = express.Router();
 var jwt = require('jsonwebtoken');
 const mysql = require('mysql');
-const { MYSQL, TOKENSECRET, DATABASENAME } = require('../../settings');
+const { MYSQL, TOKENSECRET } = require('../../settings');
 const multer = require('multer');
 const upload = multer();
 
@@ -30,6 +30,63 @@ auth.use((req, res, next) => {
 	next();
 });
 
+
+// FUNC FOR ROUTES
+// Func for checking the email for universality
+const checkEmail = (email) => {
+	return new Promise((resolve, reject) => {
+		connection.query(
+			'SELECT 1 FROM Users WHERE email = ?',
+			[email],
+			(err, results) => {
+				if (err) reject(err);
+				if (results.length > 0) resolve(true);
+				else resolve(false);
+			}
+		);
+	});
+};
+
+// Func for checking the login for universality
+const checkLogin = (login) => {
+	return new Promise((resolve, reject) => {
+		connection.query(
+			'SELECT 1 FROM Users WHERE login = ?',
+			[login],
+			(err, results) => {
+				if (err) reject(err);
+				if (results.length > 0) resolve(true);
+				else resolve(false);
+			}
+		);
+	});
+};
+
+// check info
+const checkUser = (loginOrMail, password, res) => {
+	return new Promise((resolve, reject) => {
+		connection.query(
+			'SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1',
+			[loginOrMail],
+			(err, result) => {
+				if (err) reject(err);
+
+				if (result && result.length > 0) {
+					if (result[0]['password'] === password) resolve(result);
+					else {
+						res.statusMessage = 'invalid password';
+						resolve(401);
+					}
+				} else {
+					res.statusMessage = 'account not found';
+					resolve(401); // If there are no results, then the user is not identified
+				}
+			}
+		);
+	});
+};
+
+// ROUTES:
 auth.get('/islogin', upload.none(), (req, res) => {
 	let usersCookie = Object.keys(req.cookies);
 
@@ -65,36 +122,6 @@ auth.post('/register', upload.none(), (req, res) => {
 		res.sendStatus(200);
 		return; // If the user has cookies, the user is redirected to the home page
 	}
-
-	// Func for checking the login for universality
-	const checkLogin = (login) => {
-		return new Promise((resolve, reject) => {
-			connection.query(
-				'SELECT 1 FROM Users WHERE login = ?',
-				[login],
-				(err, results) => {
-					if (err) reject(err);
-					if (results.length > 0) resolve(true);
-					else resolve(false);
-				}
-			);
-		});
-	};
-
-	// Func for checking the email for universality
-	const checkEmail = (email) => {
-		return new Promise((resolve, reject) => {
-			connection.query(
-				'SELECT 1 FROM Users WHERE email = ?',
-				[email],
-				(err, results) => {
-					if (err) reject(err);
-					if (results.length > 0) resolve(true);
-					else resolve(false);
-				}
-			);
-		});
-	};
 
 	// Use functions
 	checkLogin(login)
@@ -172,30 +199,7 @@ auth.post('/login', upload.none(), (req, res) => {
 		return; // If the user has cookies, the user is redirected to the logout page
 	}
 
-	// check info
-	checkUser = (loginOrMail, password) => {
-		return new Promise((resolve, reject) => {
-			connection.query(
-				'SELECT * FROM Users WHERE ? IN (email, login) LIMIT 1',
-				[loginOrMail],
-				(err, result) => {
-					if (err) reject(err);
-
-					if (result && result.length > 0) {
-						if (result[0]['password'] === password) resolve(result);
-						else {
-							res.statusMessage = 'invalid password';
-							resolve(401);
-						}
-					} else {
-						res.statusMessage = 'account not found';
-						resolve(401); // If there are no results, then the user is not identified
-					}
-				}
-			);
-		});
-	};
-	checkUser(loginOrMail, password)
+	checkUser(loginOrMail, password, res)
 		.then((value) => {
 			if (value == 401) res.sendStatus(401);
 			else {
@@ -224,7 +228,7 @@ auth.post('/login', upload.none(), (req, res) => {
 });
 
 // logout
-auth.get('/logout', function (req, res, next) {
+auth.get('/logout', function (req, res) {
 	// Processing cookie
 	let usersCookie = Object.keys(req.cookies)[0];
 
