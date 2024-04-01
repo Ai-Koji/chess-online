@@ -191,7 +191,6 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 			connection.query(sqlcode2, [user_id, content], (err) => {
 				if (err) res.sendStatus(500);
 				else {
-					res.sendStatus(200);
 					let sqlcode3 = `
 						UPDATE Forums
 							SET
@@ -199,7 +198,21 @@ forum.post('/create-discussion', upload.none(), (req, res) => {
 								messages_count = messages_count + 1
 						WHERE id = ?;
 					`;
-					connection.query(sqlcode3, [forum_id]);
+					connection.query(sqlcode3, [forum_id], (err) => {
+						if (err) res.sendStatus(500);
+						else {
+							let sqlcode4 = `
+								SELECT MAX(id) as discussionId FROM Discussions 
+							`
+							connection.query(sqlcode4, (err, result) => {
+								if (err) res.sendStatus(500);
+								else {
+									res.json({result});
+								}
+								
+							});
+						}
+					});
 				}
 			});
 		}
