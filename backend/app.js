@@ -20,7 +20,6 @@ app.use(cookieParser());
 app.use('/static/', express.static(path.join(__dirname, 'build/static/')));
 
 app.use('/api', apiRouter);
-app.use('/media', express.static(__dirname + '/media'));
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
