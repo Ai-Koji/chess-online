@@ -79,10 +79,10 @@ library.get('/book/:bookId', upload.none(), (req, res) => {
 			Pdf.URL AS pdfUrl
         FROM 
             Books
-        INNER JOIN 
-            Images ON Books.image = Images.id
+		LEFT JOIN 
+            Images ON Books.image_id = Images.id
         LEFT JOIN 
-			Pdf ON Books.pdf = Pdf.id
+			Pdf ON Books.pdf_id = Pdf.id
         WHERE 
             Books.id = ?;
     `;
