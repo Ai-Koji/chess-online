@@ -37,6 +37,16 @@ connection.query('USE chess_online', function (err) {
 // create tables
 console.log('create tables');
 let sqlCode = [
+    // Board
+	`CREATE TABLE IF NOT EXISTS Boards (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        header TEXT NOT NULL,
+        mainFen TEXT DEFAULT "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        game TEXT NOT NULL,
+        is_open BOOLEAN DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES Users (id)
+    );`,
 	// Users
 	`CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT PRIMARY KEY,

@@ -7,7 +7,7 @@ const multer = require('multer');
 const upload = multer();
 
 const accessTokenSecret = TOKENSECRET;
-// {token: {login, password, email}]}
+// {token: {id, login, password, email}]}
 
 cookies = {};
 
