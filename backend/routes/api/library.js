@@ -51,12 +51,13 @@ library.get('/main', upload.none(), (req, res) => {
 					if (err) {
 						res.sendStatus(500);
 						isError = true;
-					} else 
+					} else {
+						if (result2.length)
 						books.push({
 							header: item.header,
 							bookList: result2
 						});
-
+					}
 					if (count === result.length) 
 						if (!isError)
 							res.json(books);
