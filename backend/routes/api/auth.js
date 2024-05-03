@@ -86,6 +86,36 @@ const checkUser = (loginOrMail, password, res) => {
 	});
 };
 
+function isStrongPassword(password) {
+    // Проверка длины пароля (минимум 8 символов)
+    if (password.length < 8) {
+        return false;
+    }
+
+    // Проверка наличия хотя бы одной заглавной буквы
+    if (!/[A-Z]/.test(password)) {
+        return false;
+    }
+
+    // Проверка наличия хотя бы одной строчной буквы
+    if (!/[a-z]/.test(password)) {
+        return false;
+    }
+
+    // Проверка наличия хотя бы одной цифры
+    if (!/\d/.test(password)) {
+        return false;
+    }
+
+    // Проверка наличия хотя бы одного специального символа
+    if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/.test(password)) {
+        return false;
+    }
+
+    // Если все проверки пройдены, вернуть true
+    return true;
+}
+
 // ROUTES:
 auth.get('/islogin', upload.none(), (req, res) => {
 	let usersCookie = Object.keys(req.cookies);
@@ -121,6 +151,12 @@ auth.post('/register', upload.none(), (req, res) => {
 	} else if (Object.keys(req.cookies).length > 0) {
 		res.sendStatus(200);
 		return; // If the user has cookies, the user is redirected to the home page
+	}
+
+	if (!isStrongPassword(password)) { // проверка на сложность пароля
+		res.statusMessage = 'easy password';
+		res.sendStatus(400);
+		return;
 	}
 
 	// Use functions
