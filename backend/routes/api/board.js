@@ -47,6 +47,7 @@ board.get('/:boardId', (req, res) => {
                 connection.query(
                     `
                     SELECT
+                        id,
                         user_id,
                         header,
                         mainFen
@@ -85,6 +86,7 @@ board.post('/update-add/:boardId/', (req, res) => {
                 res.sendStatus(403)
             }
             else { // если пользователь авторизован, то продолжаем
+                let id = req.body.id; // получаем id партии
                 connection.query(`
                     SELECT user_id 
                     FROM Boards
@@ -93,18 +95,21 @@ board.post('/update-add/:boardId/', (req, res) => {
                 [boardId],
                 (err, result1) => {
                         if(err) res.sendStatus(500);
-                        else if (result1[0].user_id = user.id){
+                        else if (result1[0].user_id != user.id){
                             res.statusMessage = 'Forbidden'
                             res.sendStatus(403);
                         }
                         else {
                             connection.query(`
-                                INSERT INTO Boards
-                                    (user_id, header, mainFen, game, is_open)
-                                VALUES
-                                    (?, ?, ?, ?, ?);
+                                UPDATE Boards
+                                SET 
+                                    header = ?, 
+                                    mainFen = ?, 
+                                    game = ?, 
+                                    is_open = ?
+                                WHERE id = ?;
                             `, 
-                            [user.id, header, mainFen, game, isOpen],
+                            [header ? header : "", mainFen, game, isOpen, id],
                             (err) => {
                                     if (err) res.sendStatus(500);
                                     else res.sendStatus(200);
@@ -117,7 +122,6 @@ board.post('/update-add/:boardId/', (req, res) => {
         } else { // добавляем партию в бд
             let user = isLogin(req, res);
             if (!user) {
-                console.log('tes')
                 res.statusMessage = 'Not auth';
                 res.sendStatus(403);
             } // если пользователь не авторизован
@@ -128,7 +132,7 @@ board.post('/update-add/:boardId/', (req, res) => {
                     VALUES
                         (?, ?, ?, ?, ?);
                 `, 
-                [user.id, header, mainFen, game, isOpen],
+                [user.id, header ? header : "", mainFen, game, isOpen],
                 (err) => {
                         if (err) res.sendStatus(500);
                         else res.sendStatus(200);
@@ -137,11 +141,54 @@ board.post('/update-add/:boardId/', (req, res) => {
             };
         };
     } catch (err) {
-        console.log(err)
         res.sendStatus(500);
     }
 });
-    
+
+// Удалить партию
+board.delete('/delete/:boardId/', (req, res) => {
+	let boardId = Number(req.params.boardId);
+
+    try {
+        if (boardId) { // если boardId != 0, то значит обновляем партию в бд
+            let user = isLogin(req, res);
+            if (!user) { // если пользователь не авторизован
+                res.statusMessage = 'Not auth';
+                res.sendStatus(403);
+            }
+            else { // если пользователь авторизован, то продолжаем
+                let id = req.body.id; // получаем id партии
+                connection.query(`
+                    SELECT user_id 
+                    FROM Boards
+                    WHERE Boards.id = ?;
+                `,
+                [boardId],
+                (err, result1) => {
+                        if(err) res.sendStatus(500);
+                        else if (result1[0].user_id != user.id)
+                            res.sendStatus(403);
+                        else {
+                            connection.query(`
+                                DELETE FROM Boards WHERE id = ?;
+                            `, 
+                            [boardId],
+                            (err) => {
+                                    if (err) res.sendStatus(500);
+                                    else res.sendStatus(200);
+                                }
+                            );
+                        }
+                    }
+                );
+            };
+        } else  // добавляем партию в бд
+            res.sendStatus(400);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+});
+
 // проверка на авторизацию
 function isLogin (req, res) {
 	let usersCookie = Object.keys(req.cookies);
