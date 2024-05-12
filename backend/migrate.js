@@ -42,7 +42,7 @@ let sqlCode = [
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
         header TEXT NOT NULL,
-        mainFen TEXT DEFAULT "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        mainFen TEXT,
         game TEXT NOT NULL,
         is_open BOOLEAN DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES Users (id)
