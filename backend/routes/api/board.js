@@ -29,7 +29,8 @@ board.get('/:boardId', (req, res) => {
 	connection.query(
 		`
         SELECT *
-        FROM Boards WHERE id = ?;
+        FROM 
+            Boards WHERE id = ?;
         `,
         [boardId],
 		(err, result1) => {
@@ -39,8 +40,8 @@ board.get('/:boardId', (req, res) => {
                 if (result1.length == 0) game = [];
                 else {
                     result1 = result1[0];
-                    if (result1.user_id == user.id) game = result1
-                    else if (!result1.is_open) game = [];
+                    if (result1.user_id == user.id) {game = result1}
+                    else if (!result1.is_open) game = []
                     else game = result1
                 }
 
@@ -61,7 +62,7 @@ board.get('/:boardId', (req, res) => {
                         if (err) savedGames = [];
                         else savedGames = result2;
 
-                        res.json({game: game, savedGames: savedGames})
+                        res.json({game: game, savedGames: savedGames, isAuthor: (boardId == 0) ? 1 : result1.user_id == user.id})
                     }
                 );
             };
@@ -111,9 +112,9 @@ board.post('/update-add/:boardId/', (req, res) => {
                             `, 
                             [header ? header : "", mainFen, game, isOpen, id],
                             (err) => {
-                                    if (err) res.sendStatus(500);
-                                    else res.sendStatus(200);
-                                }
+                                if (err) res.sendStatus(500);
+                                else res.sendStatus(200);
+                            }
                             );
                         }
                     }
@@ -196,7 +197,6 @@ function isLogin (req, res) {
 
     let cookies = auth.getCookies();
     
-
 	if (usersCookie.length >= 1) {
 		if (usersCookie[0] in cookies)
             return cookies[usersCookie[0]];
