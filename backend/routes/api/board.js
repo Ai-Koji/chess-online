@@ -72,7 +72,7 @@ board.get('/:boardId', (req, res) => {
 
 // Обновить/сохранить партию
 board.post('/update-add/:boardId/', (req, res) => {
-	let boardId = Number(req.params.boardId);
+    let boardId = Number(req.params.boardId);
 
     try {
         let header = req.body.header;
@@ -85,8 +85,7 @@ board.post('/update-add/:boardId/', (req, res) => {
             if (!user) { // если пользователь не авторизован
                 res.statusMessage = 'Not auth'
                 res.sendStatus(403)
-            }
-            else { // если пользователь авторизован, то продолжаем
+            } else { // если пользователь авторизован, то продолжаем
                 let id = req.body.id; // получаем id партии
                 connection.query(`
                     SELECT user_id 
@@ -95,12 +94,11 @@ board.post('/update-add/:boardId/', (req, res) => {
                 `,
                 [boardId],
                 (err, result1) => {
-                        if(err) res.sendStatus(500);
-                        else if (result1[0].user_id != user.id){
+                        if (err) res.sendStatus(500);
+                        else if (result1[0].user_id != user.id) {
                             res.statusMessage = 'Forbidden'
                             res.sendStatus(403);
-                        }
-                        else {
+                        } else {
                             connection.query(`
                                 UPDATE Boards
                                 SET 
@@ -113,20 +111,17 @@ board.post('/update-add/:boardId/', (req, res) => {
                             [header ? header : "", mainFen, game, isOpen, id],
                             (err) => {
                                 if (err) res.sendStatus(500);
-                                else res.sendStatus(200);
-                            }
-                            );
+                                else res.status(200).json({ id: id });
+                            });
                         }
-                    }
-                );
+                    });
             };
         } else { // добавляем партию в бд
             let user = isLogin(req, res);
             if (!user) {
                 res.statusMessage = 'Not auth';
                 res.sendStatus(403);
-            } // если пользователь не авторизован
-            else { // если пользователь авторизован, то продолжаем
+            } else { // если пользователь авторизован, то продолжаем
                 connection.query(`
                     INSERT INTO Boards
                         (user_id, header, mainFen, game, is_open)
@@ -134,17 +129,20 @@ board.post('/update-add/:boardId/', (req, res) => {
                         (?, ?, ?, ?, ?);
                 `, 
                 [user.id, header ? header : "", mainFen, game, isOpen],
-                (err) => {
-                        if (err) res.sendStatus(500);
-                        else res.sendStatus(200);
+                (err, result) => {
+                    if (err) {
+                        res.sendStatus(500);
+                    } else {
+                        res.status(200).json({ id: result.insertId });
                     }
-                );
+                });
             };
         };
     } catch (err) {
         res.sendStatus(500);
     }
 });
+
 
 // Удалить партию
 board.delete('/delete/:boardId/', (req, res) => {
